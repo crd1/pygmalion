@@ -20,6 +20,13 @@ Then open your browser and navigate to `http://localhost/hallo-welt`.
 
 ## Examples
 
+### Use another port
+```
+> port 8080
+> when get /test then 'This is served on port 8080.'
+```
+(Unfortunately, due to a limitation in the underlying framework it is currently not possible to mock APIs on multiple ports at once.)
+
 ### Serve from file
 ```
 > when get /test then from index.html
