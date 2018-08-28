@@ -15,7 +15,30 @@ pygmalion
 
 Then open your browser and navigate to `http://localhost/hallo-welt`.
 
-## Documentation
+## Examples
+
+### Serve from file
+```
+> when get /test then from index.html
+```
+
+### Echo request body
+```
+> when post /test then ${body}
+```
+
+### Echo body property
+```
+> when post /test then ${JSON.parse(body).name}
+```
+
+### Dynamic evaluation
+```
+> when post /test then ${JSON.parse(body).number + 3}
+```
+(In general, expressions within `${}` are evaluated using the Nashorn Project, i.e. valid JavaScript expressions can be used. The `body` property in the example is injected by Pygmalion via bindings.)
+
+## Documentation of all commands
 ```
 pygmalion
 > help
