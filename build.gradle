@@ -15,7 +15,7 @@ plugins {
     id 'application'
 }
 
-mainClassName = 'net.rudoll.webmock.WebMockApplication'
+mainClassName = 'net.rudoll.pygmalion.PygmalionApplication'
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
