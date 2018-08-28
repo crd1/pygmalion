@@ -22,4 +22,4 @@ pygmalion
 ```
 
 ## License
-This is Free Software and published under the Apache 2.0 License.
+This is Free Software and published under the GPL 3.0 License.
