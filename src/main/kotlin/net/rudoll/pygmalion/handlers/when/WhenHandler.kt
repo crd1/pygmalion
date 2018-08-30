@@ -9,6 +9,8 @@ import net.rudoll.pygmalion.model.Input
 import net.rudoll.pygmalion.model.ParseStage
 import net.rudoll.pygmalion.model.ParsedInput
 import net.rudoll.pygmalion.util.PortUtil
+import spark.Request
+import spark.Response
 import spark.Spark
 
 object WhenHandler : Handler {
@@ -43,12 +45,13 @@ object WhenHandler : Handler {
                 }
                 val shouldLog = arguments.contains(LogArgument)
                 val route = portAndRoute.route
+                val requestHandler = { request: Request, _: Response -> handleCall(request.body(), routingContext, retVal, shouldLog) }
                 when (method) {
-                    "get" -> Spark.get(route, { request, _ -> handleCall(request.body(), routingContext, retVal, shouldLog) })
-                    "post" -> Spark.post(route, { request, _ -> handleCall(request.body(), routingContext, retVal, shouldLog) })
-                    "put" -> Spark.put(route, { request, _ -> handleCall(request.body(), routingContext, retVal, shouldLog) })
-                    "delete" -> Spark.delete(route, { request, _ -> handleCall(request.body(), routingContext, retVal, shouldLog) })
-                    "options" -> Spark.options(route, { request, _ -> handleCall(request.body(), routingContext, retVal, shouldLog) })
+                    "get" -> Spark.get(route, requestHandler)
+                    "post" -> Spark.post(route, requestHandler)
+                    "put" -> Spark.put(route, requestHandler)
+                    "delete" -> Spark.delete(route, requestHandler)
+                    "options" -> Spark.options(route, requestHandler)
                     else -> parsedInput.errors.add("Unknown method.")
                 }
             }
