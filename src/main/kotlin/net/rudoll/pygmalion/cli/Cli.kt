@@ -70,9 +70,19 @@ object Cli {
         return scanner.nextLine()
     }
 
-    fun print(message: String) {
+    fun print(message: String, promptBehaviour: PrintPromptBehaviour = PrintPromptBehaviour.WITH_PROMPT) {
         System.out.println(message)
-        prompt()
+        if (promptBehaviour == PrintPromptBehaviour.WITH_PROMPT) {
+            prompt()
+        }
     }
 
+    fun removePrompt() {
+        System.out.print("\b\b")
+    }
+
+    enum class PrintPromptBehaviour {
+        WITH_PROMPT,
+        WITHOUT_PROMPT;
+    }
 }
