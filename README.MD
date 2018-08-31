@@ -25,12 +25,19 @@ Then open your browser and navigate to `http://localhost/hallo-welt`.
 > port 8080
 > when get /test then 'This is served on port 8080.'
 ```
+Then check `http://localhost:8080/test`.
 (Unfortunately, due to a limitation in the underlying framework it is currently not possible to mock APIs on multiple ports at once.)
 
 ### Serve from file
 ```
 > when get /test then from index.html
 ```
+
+### Scripting
+```
+> apply script.txt
+```
+This will apply every line found in the provided file as if it had been entered in the CLI.
 
 ### Echo request body
 ```
