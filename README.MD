@@ -51,9 +51,18 @@ This will apply every line found in the provided file as if it had been entered 
 
 ### Dynamic evaluation
 ```
-> when post /test then ${JSON.parse(body).number + 3}
+> when post /test then ${JSON.parse(queryParams).number + 3}
 ```
-(In general, expressions within `${}` are evaluated using the Nashorn Project, i.e. valid JavaScript expressions can be used. The `body` property in the example is injected by Pygmalion via bindings.)
+In general, expressions within `${}` are evaluated using the Nashorn Project, i.e. valid JavaScript expressions can be used.
+
+The following properties are injected by Pygmalion via bindings and can be accessed from within the expressions:
+- body (Request body)
+- counter (How many times this endpoint has been called)
+- timestamp (Current timestamp, ms since the epoch)
+- headers (JSON string representing all request headers)
+- queryParams (JSON string representing all queryParams)
+- cookies (JSON string representing all cookies sent with the request)
+- uri (The request's URI)
 
 ## Documentation of all commands
 ```
