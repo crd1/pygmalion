@@ -45,7 +45,7 @@ object WhenHandler : Handler {
                 }
                 val shouldLog = arguments.contains(LogArgument)
                 val route = portAndRoute.route
-                val requestHandler = { request: Request, _: Response -> handleCall(request.body(), routingContext, retVal, shouldLog) }
+                val requestHandler = { request: Request, _: Response -> handleCall(request, routingContext, retVal, shouldLog) }
                 when (method) {
                     "get" -> Spark.get(route, requestHandler)
                     "post" -> Spark.post(route, requestHandler)
@@ -58,11 +58,11 @@ object WhenHandler : Handler {
         })
     }
 
-    private fun handleCall(body: String, context: RoutingContext, retVal: DynamicRetVal, shouldLog: Boolean): String {
+    private fun handleCall(request: Request, context: RoutingContext, retVal: DynamicRetVal, shouldLog: Boolean): String {
         if (shouldLog) {
             System.out.println("Received call to mapped route: $context")
         }
-        return retVal.getRetVal(body)
+        return retVal.getRetVal(request)
     }
 
     private data class RoutingContext(val route: String, val method: String, val port: Int)

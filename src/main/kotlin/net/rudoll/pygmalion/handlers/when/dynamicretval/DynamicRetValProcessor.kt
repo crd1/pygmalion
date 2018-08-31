@@ -1,5 +1,6 @@
 package net.rudoll.pygmalion.handlers.`when`.dynamicretval
 
+import spark.Request
 import java.util.regex.Pattern
 import javax.script.ScriptContext
 import javax.script.ScriptEngineManager
@@ -10,12 +11,12 @@ class DynamicRetValProcessor {
     private val retValCounter = RetValCounter()
 
 
-    fun process(pattern: String, body: String): String {
+    fun process(pattern: String, request: Request): String {
         return try {
             val bindings = engine.getBindings(ScriptContext.ENGINE_SCOPE)
             bindings["counter"] = retValCounter.call()
             bindings["timestamp"] = System.currentTimeMillis().toString()
-            bindings["body"] = body
+            bindings["body"] = request.body()
 
             val matcher = EXPRESSION_PATTERN.matcher(pattern)
             val processed = StringBuffer()

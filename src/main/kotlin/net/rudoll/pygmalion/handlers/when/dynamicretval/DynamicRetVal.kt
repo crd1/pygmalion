@@ -1,6 +1,8 @@
 package net.rudoll.pygmalion.handlers.`when`.dynamicretval
 
+import spark.Request
+
 interface DynamicRetVal {
 
-    fun getRetVal(body: String) : String
+    fun getRetVal(request: Request) : String
 }
