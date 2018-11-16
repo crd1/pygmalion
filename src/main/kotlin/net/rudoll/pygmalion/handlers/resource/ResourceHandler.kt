@@ -1,15 +1,10 @@
 package net.rudoll.pygmalion.handlers.resource
 
 import net.rudoll.pygmalion.handlers.Handler
-import net.rudoll.pygmalion.handlers.arguments.parsedarguments.ParsedArgument
-import net.rudoll.pygmalion.model.Action
 import net.rudoll.pygmalion.model.Input
 import net.rudoll.pygmalion.model.ParseStage
 import net.rudoll.pygmalion.model.ParsedInput
-import net.rudoll.pygmalion.util.HttpCallMapperUtil
 import net.rudoll.pygmalion.util.PortUtil
-import spark.Request
-import spark.Response
 
 object ResourceHandler : Handler {
     override fun getParseStage(): ParseStage {
@@ -17,18 +12,27 @@ object ResourceHandler : Handler {
     }
 
     override fun getDocumentation(): String {
-        return "resourceTemplate \$route"
+        return "(resourceTemplate|restTemplate) \$route"
     }
 
     override fun handle(input: Input, parsedInput: ParsedInput) {
         val target = input.second()
         val portAndRoute = PortUtil.getPortAndRoute(target)
-        parsedInput.actions.add(ResourceCreation(portAndRoute, parsedInput))
         input.consume(2)
-        //TODO accept "from" argument for initial repository
+        var initialRepoFile: String? = null
+        if (input.hasNext() && input.first() == "from") {
+            input.consume(1)
+            if (!input.hasNext()) {
+                parsedInput.errors.add("No file specified for initial resources")
+                return
+            }
+            initialRepoFile = input.first()
+            input.consume(1)
+        }
+        parsedInput.actions.add(ResourceCreation(portAndRoute, parsedInput, initialRepoFile))
     }
 
     override fun canHandle(input: Input): Boolean {
-        return input.first().toLowerCase() == "resourcetemplate"
+        return input.first().toLowerCase() == "resourcetemplate" || input.first().toLowerCase() == "resttemplate"
     }
 }

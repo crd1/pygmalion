@@ -10,7 +10,7 @@ import spark.Request
 import spark.Response
 
 
-class ResourceCreation(private val portAndRoute: PortUtil.PortAndRoute, private val parsedInput: ParsedInput) : Action {
+class ResourceCreation(private val portAndRoute: PortUtil.PortAndRoute, private val parsedInput: ParsedInput, private val initialRepoFile: String?) : Action {
 
     override fun run(arguments: Set<ParsedArgument>) {
         if (!PortUtil.setPort(portAndRoute.port)) {
@@ -18,7 +18,7 @@ class ResourceCreation(private val portAndRoute: PortUtil.PortAndRoute, private 
             return
         }
         val keyProperty = readKeyArgument(arguments, parsedInput)
-        val resourceContainer = ResourceContainer(keyProperty)
+        val resourceContainer = ResourceContainer(keyProperty, initialRepoFile)
         val route = portAndRoute.route
         parsedInput.logs.add("Creating resource mapping for $route:${portAndRoute.port ?: "80"}")
         HttpCallMapperUtil.map("get", route, parsedInput, getAllCallback(resourceContainer))

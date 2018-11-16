@@ -7,11 +7,15 @@ import java.math.BigInteger
 import java.util.UUID
 
 
-class ResourceContainer(private val keyProperty: String) {
+class ResourceContainer(private val keyProperty: String, initialRepoFile: String?) {
 
     private val resources = mutableMapOf<String, String>()
     private val gson = Gson()
     private val jsonParser = JsonParser()
+
+    init {
+        System.out.println("Using initial repoFile: $initialRepoFile")
+    }
 
     fun new(body: String, response: Response): String {
         val uuid = getNumericUUID()
@@ -52,7 +56,7 @@ class ResourceContainer(private val keyProperty: String) {
         return ""
     }
 
-    private fun setIdIfPossible(body: String, uuid: String):String{
+    private fun setIdIfPossible(body: String, uuid: String): String {
         try {
             val bodyObject = jsonParser.parse(body).asJsonObject
             bodyObject.addProperty(keyProperty, uuid)

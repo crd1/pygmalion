@@ -54,4 +54,8 @@ class Input(rawInput: String) {
         return tokens[2]
     }
 
+    fun size(): Int {
+        return tokens.size
+    }
+
 }
