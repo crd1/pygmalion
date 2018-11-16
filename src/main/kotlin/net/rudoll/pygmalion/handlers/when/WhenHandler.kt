@@ -2,6 +2,7 @@ package net.rudoll.pygmalion.handlers.`when`
 
 import net.rudoll.pygmalion.handlers.Handler
 import net.rudoll.pygmalion.handlers.`when`.dynamicretval.DynamicRetVal
+import net.rudoll.pygmalion.handlers.arguments.parsedarguments.AllowCorsArgument
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.LogArgument
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.ParsedArgument
 import net.rudoll.pygmalion.model.Action
@@ -44,8 +45,9 @@ object WhenHandler : Handler {
                     return
                 }
                 val shouldLog = arguments.contains(LogArgument)
+                val shouldAllowCORS = arguments.contains(AllowCorsArgument)
                 val route = portAndRoute.route
-                val requestHandler = { request: Request, _: Response -> handleCall(request, routingContext, retVal, shouldLog) }
+                val requestHandler = { request: Request, response: Response -> handleCall(request, response, routingContext, retVal, shouldLog, shouldAllowCORS) }
                 when (method) {
                     "get" -> Spark.get(route, requestHandler)
                     "post" -> Spark.post(route, requestHandler)
@@ -58,9 +60,12 @@ object WhenHandler : Handler {
         })
     }
 
-    private fun handleCall(request: Request, context: RoutingContext, retVal: DynamicRetVal, shouldLog: Boolean): String {
+    private fun handleCall(request: Request, response: Response, context: RoutingContext, retVal: DynamicRetVal, shouldLog: Boolean, shouldAllowCORS: Boolean): String {
         if (shouldLog) {
             System.out.println("Received call to mapped route: $context")
+        }
+        if(shouldAllowCORS) {
+            response.header("Access-Control-Allow-Origin", "*")
         }
         return retVal.getRetVal(request)
     }
