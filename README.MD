@@ -27,11 +27,11 @@ This will create the usual GET, POST, PUT, DELETE endpoints for /cookies.
 It expects them to be json objects using the property specified in the argument as key (defaults to `id`).
 Hence the following calls would work as expected after the command above:
 ```
-POST /cookies {"flavour":"chocolate"} -> 201 CREATED | "chocolate"
-PUT /cookies/chocolate {"flavour":"chocolate", "goesWith": "coffee"} -> 200 OK
-GET /cookies -> 200 OK | [{"flavour":"chocolate", "goesWith": "coffee"}]
-DELETE /cookies/chocolate -> 200 OK
-GET /cookies/chocolate -> 404 NOT FOUND
+POST http://localhost/cookies {"flavour":"chocolate"} -> 201 CREATED | "chocolate"
+PUT http://localhost/cookies/chocolate {"flavour":"chocolate", "goesWith": "coffee"} -> 200 OK
+GET http://localhost/cookies -> 200 OK | [{"flavour":"chocolate", "goesWith": "coffee"}]
+DELETE http://localhost/cookies/chocolate -> 200 OK
+GET http://localhost/cookies/chocolate -> 404 NOT FOUND
 ```
 Note that the resources can even be initialized from a JSON array stored in a file:
 ```
