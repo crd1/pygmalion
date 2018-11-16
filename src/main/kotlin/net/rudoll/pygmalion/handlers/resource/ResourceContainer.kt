@@ -4,7 +4,7 @@ import com.google.gson.Gson
 import spark.Response
 import java.util.*
 
-class ResourceContainer {
+class ResourceContainer(private val keyProperty: String) {
 
     private val resources = mutableMapOf<String, String>()
     private val gson = Gson()

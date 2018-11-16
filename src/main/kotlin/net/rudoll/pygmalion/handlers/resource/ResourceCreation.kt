@@ -12,30 +12,31 @@ import spark.Response
 
 class ResourceCreation(private val portAndRoute: PortUtil.PortAndRoute, private val parsedInput: ParsedInput) : Action {
 
-    private val resourceContainer = ResourceContainer()
-    private var keyProperty = "id" //default value
-
     override fun run(arguments: Set<ParsedArgument>) {
         if (!PortUtil.setPort(portAndRoute.port)) {
             parsedInput.errors.add("Port was already set. Route cannot be set.")
             return
         }
+        val keyProperty = readKeyArgument(arguments, parsedInput)
+        val resourceContainer = ResourceContainer(keyProperty)
         val route = portAndRoute.route
         parsedInput.logs.add("Creating resource mapping for $route:${portAndRoute.port ?: "80"}")
-        HttpCallMapperUtil.map("get", route, parsedInput, getAllCallback())
-        HttpCallMapperUtil.map("get", "$route/:id", parsedInput, getByIdCallback())
-        HttpCallMapperUtil.map("post", route, parsedInput, createCallback())
-        HttpCallMapperUtil.map("put", "$route/:id", parsedInput, updateCallback())
-        HttpCallMapperUtil.map("delete", "$route/:id", parsedInput, deleteCallback())
-        readKeyArgument(arguments, parsedInput)
+        HttpCallMapperUtil.map("get", route, parsedInput, getAllCallback(resourceContainer))
+        HttpCallMapperUtil.map("get", "$route/:id", parsedInput, getByIdCallback(resourceContainer))
+        HttpCallMapperUtil.map("post", route, parsedInput, createCallback(resourceContainer))
+        HttpCallMapperUtil.map("put", "$route/:id", parsedInput, updateCallback(resourceContainer))
+        HttpCallMapperUtil.map("delete", "$route/:id", parsedInput, deleteCallback(resourceContainer))
+
     }
 
-    private fun readKeyArgument(arguments: Set<ParsedArgument>, parsedInput: ParsedInput) {
-        arguments.filter { it is KeyArgument }.forEach { this.keyProperty = (it as KeyArgument).key }
+    private fun readKeyArgument(arguments: Set<ParsedArgument>, parsedInput: ParsedInput): String {
+        var keyProperty = "id" //default
+        arguments.filter { it is KeyArgument }.forEach { keyProperty = (it as KeyArgument).key }
         parsedInput.logs.add("Using key property: $keyProperty")
+        return keyProperty
     }
 
-    private fun deleteCallback(): HttpCallMapperUtil.ResultCallback {
+    private fun deleteCallback(resourceContainer: ResourceContainer): HttpCallMapperUtil.ResultCallback {
         return object : HttpCallMapperUtil.ResultCallback {
             override fun getResult(request: Request, response: Response): String {
                 return resourceContainer.delete(request.params(":id"), response)
@@ -43,7 +44,7 @@ class ResourceCreation(private val portAndRoute: PortUtil.PortAndRoute, private 
         }
     }
 
-    private fun updateCallback(): HttpCallMapperUtil.ResultCallback {
+    private fun updateCallback(resourceContainer: ResourceContainer): HttpCallMapperUtil.ResultCallback {
         return object : HttpCallMapperUtil.ResultCallback {
             override fun getResult(request: Request, response: Response): String {
                 return resourceContainer.set(request.params(":id"), request.body(), response)
@@ -51,7 +52,7 @@ class ResourceCreation(private val portAndRoute: PortUtil.PortAndRoute, private 
         }
     }
 
-    private fun createCallback(): HttpCallMapperUtil.ResultCallback {
+    private fun createCallback(resourceContainer: ResourceContainer): HttpCallMapperUtil.ResultCallback {
         return object : HttpCallMapperUtil.ResultCallback {
             override fun getResult(request: Request, response: Response): String {
                 return resourceContainer.new(request.body(), response)
@@ -59,7 +60,7 @@ class ResourceCreation(private val portAndRoute: PortUtil.PortAndRoute, private 
         }
     }
 
-    private fun getByIdCallback(): HttpCallMapperUtil.ResultCallback {
+    private fun getByIdCallback(resourceContainer: ResourceContainer): HttpCallMapperUtil.ResultCallback {
         return object : HttpCallMapperUtil.ResultCallback {
             override fun getResult(request: Request, response: Response): String {
                 return resourceContainer.get(request.params(":id"), response);
@@ -67,7 +68,7 @@ class ResourceCreation(private val portAndRoute: PortUtil.PortAndRoute, private 
         }
     }
 
-    private fun getAllCallback(): HttpCallMapperUtil.ResultCallback {
+    private fun getAllCallback(resourceContainer: ResourceContainer): HttpCallMapperUtil.ResultCallback {
         return object : HttpCallMapperUtil.ResultCallback {
             override fun getResult(request: Request, response: Response): String {
                 return resourceContainer.getAll()
