@@ -36,7 +36,13 @@ object WhenHandler : Handler {
             input.consume(1)
         }
         val routingContext = RoutingContext(portAndRoute.route, method, portAndRoute.port ?: 80) //default to 80
-        val retVal = WhenRetValParser.parseRetVal(input)
+        val retVal: DynamicRetVal
+        try {
+            retVal = WhenRetValParser.parseRetVal(input)
+        } catch (e: Exception) {
+            parsedInput.errors.add("Return value could not be parsed. Please issue 'help' for the correct syntax.")
+            return
+        }
         parsedInput.actions.add(object : Action {
             override fun run(arguments: Set<ParsedArgument>) {
                 parsedInput.logs.add("Mapping routingContext $routingContext")
