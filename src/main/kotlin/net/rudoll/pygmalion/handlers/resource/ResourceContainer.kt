@@ -1,17 +1,22 @@
 package net.rudoll.pygmalion.handlers.resource
 
 import com.google.gson.Gson
+import com.google.gson.JsonParser
 import spark.Response
-import java.util.*
+import java.math.BigInteger
+import java.util.UUID
+
 
 class ResourceContainer(private val keyProperty: String) {
 
     private val resources = mutableMapOf<String, String>()
     private val gson = Gson()
+    private val jsonParser = JsonParser()
 
     fun new(body: String, response: Response): String {
-        val uuid = UUID.randomUUID().toString()
-        resources[uuid] = body
+        val uuid = getNumericUUID()
+        val newBody = setIdIfPossible(body, uuid)
+        resources[uuid] = newBody
         response.status(201)
         return uuid
     }
@@ -31,7 +36,8 @@ class ResourceContainer(private val keyProperty: String) {
     }
 
     fun set(id: String, body: String, response: Response): String {
-        resources[id] = body
+        val newBody = setIdIfPossible(body, id)
+        resources[id] = newBody
         response.status(200)
         return ""
     }
@@ -44,5 +50,21 @@ class ResourceContainer(private val keyProperty: String) {
         resources.remove(id)
         response.status(200)
         return ""
+    }
+
+    private fun setIdIfPossible(body: String, uuid: String):String{
+        try {
+            val bodyObject = jsonParser.parse(body).asJsonObject
+            bodyObject.addProperty(keyProperty, uuid)
+            return bodyObject.toString()
+        } catch (e: Exception) {
+            //this is an optional feature
+        }
+        return body
+    }
+
+    private fun getNumericUUID(): String {
+        val uuid = UUID.randomUUID().toString().replace("-", "")
+        return String.format("%040d", BigInteger(uuid, 16))
     }
 }
