@@ -33,6 +33,10 @@ GET /cookies -> 200 OK | [{"flavour":"chocolate", "goesWith": "coffee"}]
 DELETE /cookies/chocolate -> 200 OK
 GET /cookies/chocolate -> 404 NOT FOUND
 ```
+Note that the resources can even be initialized from a JSON array stored in a file:
+```
+> restTemplate /cookies from cookies.txt --key=flavour
+```
 
 ## Further examples
 
