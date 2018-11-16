@@ -6,13 +6,16 @@ import net.rudoll.pygmalion.model.Action
 import net.rudoll.pygmalion.model.Input
 import net.rudoll.pygmalion.model.ParseStage
 import net.rudoll.pygmalion.model.ParsedInput
+import net.rudoll.pygmalion.util.HttpCallMapperUtil
 import net.rudoll.pygmalion.util.PortUtil
-import spark.Spark
+import spark.Request
+import spark.Response
 
 object ResourceHandler : Handler {
     override fun getParseStage(): ParseStage {
         return ParseStage.FIRST_PASS
     }
+
     override fun getDocumentation(): String {
         return "resourceTemplate \$route"
     }
@@ -26,23 +29,5 @@ object ResourceHandler : Handler {
 
     override fun canHandle(input: Input): Boolean {
         return input.first().toLowerCase() == "resourcetemplate"
-    }
-
-    class ResourceCreation(private val portAndRoute: PortUtil.PortAndRoute, private val parsedInput: ParsedInput) : Action {
-
-        private val resourceContainer = ResourceContainer()
-        override fun run(arguments: Set<ParsedArgument>) {
-            if (!PortUtil.setPort(portAndRoute.port)) {
-                parsedInput.errors.add("Port was already set. Route cannot be set.")
-                return
-            }
-            val route = portAndRoute.route
-            parsedInput.logs.add("Creating resource mapping for $route:${portAndRoute.port ?: "80"}")
-            Spark.get(route, { _, _ -> resourceContainer.getAll() })
-            Spark.get("$route/:id", { request, response -> resourceContainer.get(request.params(":id"), response) })
-            Spark.post(route, { request, response -> resourceContainer.new(request.body(), response) })
-            Spark.put("$route/:id", { request, response -> resourceContainer.set(request.params(":id"), request.body(),response) })
-            Spark.delete("$route/:id", { request, response -> resourceContainer.delete(request.params(":id"), response) })
-        }
     }
 }

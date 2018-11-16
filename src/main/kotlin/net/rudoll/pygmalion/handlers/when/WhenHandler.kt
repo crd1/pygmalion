@@ -9,10 +9,10 @@ import net.rudoll.pygmalion.model.Action
 import net.rudoll.pygmalion.model.Input
 import net.rudoll.pygmalion.model.ParseStage
 import net.rudoll.pygmalion.model.ParsedInput
+import net.rudoll.pygmalion.util.HttpCallMapperUtil
 import net.rudoll.pygmalion.util.PortUtil
 import spark.Request
 import spark.Response
-import spark.Spark
 
 object WhenHandler : Handler {
     override fun getParseStage(): ParseStage {
@@ -44,29 +44,18 @@ object WhenHandler : Handler {
                     parsedInput.errors.add("Port was already set. Route cannot be set.")
                     return
                 }
-                val shouldLog = arguments.contains(LogArgument)
-                val shouldAllowCORS = arguments.contains(AllowCorsArgument)
                 val route = portAndRoute.route
-                val requestHandler = { request: Request, response: Response -> handleCall(request, response, routingContext, retVal, shouldLog, shouldAllowCORS) }
-                when (method) {
-                    "get" -> Spark.get(route, requestHandler)
-                    "post" -> Spark.post(route, requestHandler)
-                    "put" -> Spark.put(route, requestHandler)
-                    "delete" -> Spark.delete(route, requestHandler)
-                    "options" -> Spark.options(route, requestHandler)
-                    else -> parsedInput.errors.add("Unknown method.")
+                val resultCallback = object : HttpCallMapperUtil.ResultCallback {
+                    override fun getResult(request: Request, response: Response): String {
+                        return WhenHandler.handleCall(request, retVal)
+                    }
                 }
+                HttpCallMapperUtil.map(method, route, parsedInput, resultCallback)
             }
         })
     }
 
-    private fun handleCall(request: Request, response: Response, context: RoutingContext, retVal: DynamicRetVal, shouldLog: Boolean, shouldAllowCORS: Boolean): String {
-        if (shouldLog) {
-            System.out.println("Received call to mapped route: $context")
-        }
-        if(shouldAllowCORS) {
-            response.header("Access-Control-Allow-Origin", "*")
-        }
+    private fun handleCall(request: Request, retVal: DynamicRetVal): String {
         return retVal.getRetVal(request)
     }
 
