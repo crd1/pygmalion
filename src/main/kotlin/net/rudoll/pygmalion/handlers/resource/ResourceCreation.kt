@@ -18,7 +18,14 @@ class ResourceCreation(private val portAndRoute: PortUtil.PortAndRoute, private 
             return
         }
         val keyProperty = readKeyArgument(arguments, parsedInput)
-        val resourceContainer = ResourceContainer(keyProperty, initialRepoFile)
+        val resourceContainer = ResourceContainer(keyProperty)
+        if (initialRepoFile != null) {
+            val initialized = resourceContainer.init(initialRepoFile, parsedInput)
+            if (!initialized) {
+                parsedInput.errors.add("ResourceTemplate could not be initialized.")
+                return
+            }
+        }
         val route = portAndRoute.route
         parsedInput.logs.add("Creating resource mapping for $route:${portAndRoute.port ?: "80"}")
         HttpCallMapperUtil.map("get", route, parsedInput, getAllCallback(resourceContainer))
@@ -30,7 +37,7 @@ class ResourceCreation(private val portAndRoute: PortUtil.PortAndRoute, private 
     }
 
     private fun readKeyArgument(arguments: Set<ParsedArgument>, parsedInput: ParsedInput): String {
-        var keyProperty = "id" //default
+        var keyProperty = ResourceContainer.DEFAULT_KEY_PROPERTY //default
         arguments.filter { it is KeyArgument }.forEach { keyProperty = (it as KeyArgument).key }
         parsedInput.logs.add("Using key property: $keyProperty")
         return keyProperty

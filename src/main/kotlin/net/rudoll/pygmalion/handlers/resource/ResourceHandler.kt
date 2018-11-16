@@ -12,7 +12,7 @@ object ResourceHandler : Handler {
     }
 
     override fun getDocumentation(): String {
-        return "(resourceTemplate|restTemplate) \$route"
+        return "(resourceTemplate|restTemplate) \$route [from \$jsonArrayFile]"
     }
 
     override fun handle(input: Input, parsedInput: ParsedInput) {
