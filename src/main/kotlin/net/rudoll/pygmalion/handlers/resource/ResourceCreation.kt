@@ -1,5 +1,6 @@
 package net.rudoll.pygmalion.handlers.resource
 
+import net.rudoll.pygmalion.handlers.arguments.parsedarguments.KeyArgument
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.ParsedArgument
 import net.rudoll.pygmalion.model.Action
 import net.rudoll.pygmalion.model.ParsedInput
@@ -12,6 +13,7 @@ import spark.Response
 class ResourceCreation(private val portAndRoute: PortUtil.PortAndRoute, private val parsedInput: ParsedInput) : Action {
 
     private val resourceContainer = ResourceContainer()
+    private var keyProperty = "id" //default value
 
     override fun run(arguments: Set<ParsedArgument>) {
         if (!PortUtil.setPort(portAndRoute.port)) {
@@ -25,6 +27,12 @@ class ResourceCreation(private val portAndRoute: PortUtil.PortAndRoute, private 
         HttpCallMapperUtil.map("post", route, parsedInput, createCallback())
         HttpCallMapperUtil.map("put", "$route/:id", parsedInput, updateCallback())
         HttpCallMapperUtil.map("delete", "$route/:id", parsedInput, deleteCallback())
+        readKeyArgument(arguments, parsedInput)
+    }
+
+    private fun readKeyArgument(arguments: Set<ParsedArgument>, parsedInput: ParsedInput) {
+        arguments.filter { it is KeyArgument }.forEach { this.keyProperty = (it as KeyArgument).key }
+        parsedInput.logs.add("Using key property: $keyProperty")
     }
 
     private fun deleteCallback(): HttpCallMapperUtil.ResultCallback {

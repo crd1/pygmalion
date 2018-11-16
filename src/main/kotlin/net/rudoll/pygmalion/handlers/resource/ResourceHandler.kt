@@ -25,6 +25,7 @@ object ResourceHandler : Handler {
         val portAndRoute = PortUtil.getPortAndRoute(target)
         parsedInput.actions.add(ResourceCreation(portAndRoute, parsedInput))
         input.consume(2)
+        //TODO accept "from" argument for initial repository
     }
 
     override fun canHandle(input: Input): Boolean {

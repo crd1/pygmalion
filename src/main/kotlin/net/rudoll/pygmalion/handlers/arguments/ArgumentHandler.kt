@@ -21,7 +21,7 @@ object ArgumentHandler : Handler {
         return input.first().startsWith("--")
     }
 
-    private val argumentHandlers = listOf(VerboseArgumentHandler, LogArgumentHandler, AllowCORSArgumentHandler)
+    private val argumentHandlers = listOf(VerboseArgumentHandler, LogArgumentHandler, AllowCORSArgumentHandler, KeyArgumentHandler)
 
     override fun handle(input: Input, parsedInput: ParsedInput) {
         while (input.hasNext() && input.first().startsWith("--")) {
