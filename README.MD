@@ -18,7 +18,23 @@ pygmalion
 
 Then open your browser and navigate to `http://localhost/hallo-welt`.
 
-## Examples
+## RestTemplates
+There are quite a lot of useful Pygmalion commands. One of the most powerful ones is the `restTemplate` command. Its syntax is:
+```
+> restTemplate /cookies --key=flavour
+```
+This will create the usual GET, POST, PUT, DELETE endpoints for /cookies.
+It expects them to be json objects using the property specified in the argument as key (defaults to `id`).
+Hence the following calls would work as expected after the command above:
+```
+POST /cookies {"flavour":"chocolate"} -> 201 CREATED | "chocolate"
+PUT /cookies/chocolate {"flavour":"chocolate", "goesWith": "coffee"} -> 200 OK
+GET /cookies -> 200 OK | [{"flavour":"chocolate", "goesWith": "coffee"}]
+DELETE /cookies/chocolate -> 200 OK
+GET /cookies/chocolate -> 404 NOT FOUND
+```
+
+## Further examples
 
 ### Use another port
 ```
@@ -66,6 +82,7 @@ The following properties are injected by Pygmalion via bindings and can be acces
 |queryParams|JSON string representing all queryParams|
 |cookies|JSON string representing all cookies sent with the request|
 |uri|The request's URI|
+
 
 ## Documentation of all commands
 ```
