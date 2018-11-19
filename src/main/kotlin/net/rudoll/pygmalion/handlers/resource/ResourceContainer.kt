@@ -50,7 +50,7 @@ class ResourceContainer(private val keyProperty: String) {
         val newBody = setIdIfPossible(body, id)
         resources[id] = newBody
         response.status(201)
-        return id
+        return newBody.toString()
     }
 
     fun getAll(): String {
