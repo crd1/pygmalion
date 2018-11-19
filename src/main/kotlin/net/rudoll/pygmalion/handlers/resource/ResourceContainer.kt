@@ -1,9 +1,6 @@
 package net.rudoll.pygmalion.handlers.resource
 
-import com.google.gson.Gson
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
+import com.google.gson.*
 import net.rudoll.pygmalion.model.ParsedInput
 import spark.Response
 import java.io.File
@@ -13,7 +10,7 @@ import java.util.*
 
 class ResourceContainer(private val keyProperty: String) {
 
-    private val resources = mutableMapOf<String, String>()
+    private val resources = mutableMapOf<String, JsonElement>()
     private val gson = Gson()
     private val jsonParser = JsonParser()
 
@@ -33,7 +30,7 @@ class ResourceContainer(private val keyProperty: String) {
         for (i in 0 until initialValues.size()) {
             try {
                 val objectId = getId(initialValues[i].asJsonObject)
-                resources[objectId] = initialValues[i].toString()
+                resources[objectId] = initialValues[i].asJsonObject
             } catch (e: Exception) {
                 parsedInput.errors.add("Not all elements in the initial repository have a predefined id.")
                 return false
@@ -67,7 +64,7 @@ class ResourceContainer(private val keyProperty: String) {
             response.status(404)
             return ""
         }
-        return resource
+        return resource.toString()
     }
 
     fun set(id: String, body: String, response: Response): String {
@@ -95,15 +92,15 @@ class ResourceContainer(private val keyProperty: String) {
         return jsonId.replace("\"", "")
     }
 
-    private fun setIdIfPossible(body: String, uuid: String): String {
+    private fun setIdIfPossible(body: String, uuid: String): JsonElement {
         try {
             val bodyObject = jsonParser.parse(body).asJsonObject
             bodyObject.addProperty(keyProperty, uuid)
-            return bodyObject.toString()
+            return bodyObject
         } catch (e: Exception) {
             //this is an optional feature
         }
-        return body
+        return JsonPrimitive(body)
     }
 
     private fun getNumericUUID(): String {
