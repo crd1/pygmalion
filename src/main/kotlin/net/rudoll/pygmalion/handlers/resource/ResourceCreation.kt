@@ -1,5 +1,6 @@
 package net.rudoll.pygmalion.handlers.resource
 
+import net.rudoll.pygmalion.handlers.arguments.parsedarguments.AllowCorsArgument
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.KeyArgument
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.ParsedArgument
 import net.rudoll.pygmalion.model.Action
@@ -33,7 +34,10 @@ class ResourceCreation(private val portAndRoute: PortUtil.PortAndRoute, private 
         HttpCallMapperUtil.map("post", route, parsedInput, createCallback(resourceContainer))
         HttpCallMapperUtil.map("put", "$route/:id", parsedInput, updateCallback(resourceContainer))
         HttpCallMapperUtil.map("delete", "$route/:id", parsedInput, deleteCallback(resourceContainer))
-
+        if (parsedInput.arguments.contains(AllowCorsArgument)) {
+            HttpCallMapperUtil.allowPreflightRequests(route)
+            HttpCallMapperUtil.allowPreflightRequests("$route/:id")
+        }
     }
 
     private fun readKeyArgument(arguments: Set<ParsedArgument>, parsedInput: ParsedInput): String {

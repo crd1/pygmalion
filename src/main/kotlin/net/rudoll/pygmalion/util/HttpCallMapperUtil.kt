@@ -9,6 +9,10 @@ import spark.Spark
 
 object HttpCallMapperUtil {
 
+    private val ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin"
+    private val ACCESS_CONTROL_ALLOW_HEADERS = "Access-Control-Allow-Headers"
+    private val ACCESS_CONTROL_ALLOW_METHODS = "Access-Control-Allow-Methods"
+
     fun map(method: String, route: String, parsedInput: ParsedInput, resultCallback: ResultCallback) {
         val requestHandler = { request: Request, response: Response -> handleCall(request, response, parsedInput, resultCallback) }
         when (method) {
@@ -29,12 +33,23 @@ object HttpCallMapperUtil {
             System.out.println("Received call to mapped route: $request")
         }
         if (shouldAllowCORS) {
-            response.header("Access-Control-Allow-Origin", "*")
+            response.header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
         }
         return resultCallback.getResult(request, response)
     }
 
     interface ResultCallback {
         fun getResult(request: Request, response: Response): String
+    }
+
+    fun allowPreflightRequests(route: String) {
+        Spark.options(route, { _, response -> successfulPreflight(response) })
+    }
+
+    private fun successfulPreflight(response: Response): String {
+        response.header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
+        response.header(ACCESS_CONTROL_ALLOW_HEADERS, "content-type")
+        response.header(ACCESS_CONTROL_ALLOW_METHODS, "POST, GET, PUT, OPTIONS, DELETE")
+        return ""
     }
 }
