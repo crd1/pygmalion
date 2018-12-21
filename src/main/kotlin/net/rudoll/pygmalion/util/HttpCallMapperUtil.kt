@@ -16,7 +16,7 @@ object HttpCallMapperUtil {
 
     fun map(method: String, route: String, parsedInput: ParsedInput, resultCallback: ResultCallback) {
         val requestHandler = { request: Request, response: Response -> handleCall(request, response, parsedInput, resultCallback) }
-        when (method) {
+        when (method.toLowerCase()) {
             "get" -> Spark.get(route, requestHandler)
             "post" -> Spark.post(route, requestHandler)
             "put" -> Spark.put(route, requestHandler)
