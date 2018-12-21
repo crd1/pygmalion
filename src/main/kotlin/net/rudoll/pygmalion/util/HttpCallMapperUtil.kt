@@ -1,5 +1,6 @@
 package net.rudoll.pygmalion.util
 
+import net.rudoll.pygmalion.cli.Cli
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.AllowCorsArgument
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.LogArgument
 import net.rudoll.pygmalion.model.ParsedInput
@@ -30,7 +31,8 @@ object HttpCallMapperUtil {
         val shouldLog = arguments.contains(LogArgument)
         val shouldAllowCORS = arguments.contains(AllowCorsArgument)
         if (shouldLog) {
-            System.out.println("Received call to mapped route: $request")
+            Cli.removePrompt()
+            Cli.print("< Received call to mapped route: ${request.url()}")
         }
         if (shouldAllowCORS) {
             response.header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
