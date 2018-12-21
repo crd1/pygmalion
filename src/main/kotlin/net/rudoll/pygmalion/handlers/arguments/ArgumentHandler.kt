@@ -4,8 +4,11 @@ import net.rudoll.pygmalion.handlers.Handler
 import net.rudoll.pygmalion.model.Input
 import net.rudoll.pygmalion.model.ParseStage
 import net.rudoll.pygmalion.model.ParsedInput
+import net.rudoll.pygmalion.util.HandlerDiscoveryUtil.findHandlers
 
 object ArgumentHandler : Handler {
+
+    private val delegateArgumentHandlers = findHandlers("net.rudoll.pygmalion.handlers.arguments.delegates")
 
     override fun getParseStage(): ParseStage {
         return ParseStage.SECOND_PASS
@@ -13,7 +16,7 @@ object ArgumentHandler : Handler {
 
     override fun getDocumentation(): String {
         val supportedArguments = StringBuilder()
-        argumentHandlers.forEach { supportedArguments.append("\t${it.getDocumentation()}\n") }
+        delegateArgumentHandlers.forEach { supportedArguments.append("\t${it.getDocumentation()}\n") }
         return "Supported Arguments:\n$supportedArguments"
     }
 
@@ -21,15 +24,24 @@ object ArgumentHandler : Handler {
         return input.first().startsWith("--")
     }
 
-    private val argumentHandlers = listOf(VerboseArgumentHandler, LogArgumentHandler, AllowCORSArgumentHandler, KeyArgumentHandler)
 
     override fun handle(input: Input, parsedInput: ParsedInput) {
         while (input.hasNext() && input.first().startsWith("--")) {
-            argumentHandlers.forEach {
-                if (input.hasNext() && it.canHandle(input)) {
-                    it.handle(input, parsedInput)
-                }
+            val argumentHandled = tryToHandleArgumentInput(input, parsedInput)
+            if(!argumentHandled) {
+                parsedInput.errors.add("Could not parse argument ${input.first()}")
+                return
             }
         }
+    }
+
+    private fun tryToHandleArgumentInput(input: Input, parsedInput: ParsedInput): Boolean {
+        delegateArgumentHandlers.forEach {
+            if (it.canHandle(input)) {
+                it.handle(input, parsedInput)
+                return true
+            }
+        }
+        return false // no suitable delegate found
     }
 }

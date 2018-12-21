@@ -12,7 +12,7 @@ import java.util.*
 object Cli {
 
 
-    internal val handlers = findHandlers().filter { it.getParseStage() != ParseStage.NO_PASS }.sortedBy { it.getParseStage().order }
+    internal val handlers = findHandlers("net.rudoll.pygmalion.handlers").filter { it.getParseStage() != ParseStage.NO_PASS }.sortedBy { it.getParseStage().order }
     private val version = PropertiesProvider.getVersion()
     private val scanner = Scanner(System.`in`)
 

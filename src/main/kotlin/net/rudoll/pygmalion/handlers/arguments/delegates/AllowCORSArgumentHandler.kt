@@ -1,4 +1,4 @@
-package net.rudoll.pygmalion.handlers.arguments
+package net.rudoll.pygmalion.handlers.arguments.delegates
 
 import net.rudoll.pygmalion.handlers.Handler
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.AllowCorsArgument

@@ -11,14 +11,14 @@ import java.util.*
 
 object HandlerDiscoveryUtil {
 
-    fun findHandlers(): List<Handler> {
+    fun findHandlers(packageName: String): List<Handler> {
         val classLoadersList = LinkedList<ClassLoader>()
         classLoadersList.add(ClasspathHelper.contextClassLoader())
         classLoadersList.add(ClasspathHelper.staticClassLoader())
         val reflections = Reflections(ConfigurationBuilder()
                 .setScanners(SubTypesScanner(false), ResourcesScanner())
                 .setUrls(ClasspathHelper.forClassLoader(*classLoadersList.toTypedArray()))
-                .filterInputsBy(FilterBuilder().include(FilterBuilder.prefix("net.rudoll.pygmalion.handlers"))))
+                .filterInputsBy(FilterBuilder().include(FilterBuilder.prefix(packageName))))
         return reflections.getSubTypesOf(Handler::class.java).toList().map { handlerClass -> handlerClass.kotlin.objectInstance!! }
     }
 
