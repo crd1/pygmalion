@@ -30,14 +30,15 @@ object HttpCallMapperUtil {
         val arguments = parsedInput.arguments
         val shouldLog = arguments.contains(LogArgument)
         val shouldAllowCORS = arguments.contains(AllowCorsArgument)
-        if (shouldLog) {
-            Cli.removePrompt()
-            Cli.print("< Received call to mapped route: ${request.url()}")
-        }
         if (shouldAllowCORS) {
             response.header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
         }
-        return resultCallback.getResult(request, response)
+        val result = resultCallback.getResult(request, response)
+        if (shouldLog) {
+            Cli.removePrompt()
+            Cli.print("< ${DateUtil.now()} | ${request.url()} | Status ${response.status()} | Body length: ${result.length}")
+        }
+        return result
     }
 
     interface ResultCallback {
