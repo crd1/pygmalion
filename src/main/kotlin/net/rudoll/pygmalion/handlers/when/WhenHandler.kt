@@ -20,7 +20,7 @@ object WhenHandler : Handler {
     }
 
     override fun getDocumentation(): String {
-        return "when \$method \$route [then] [from|status] \$value"
+        return "when \$method \$route [then] [from|[with ]status] \$value"
     }
 
     override fun canHandle(input: Input): Boolean {

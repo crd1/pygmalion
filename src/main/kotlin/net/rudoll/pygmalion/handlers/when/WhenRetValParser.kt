@@ -10,7 +10,7 @@ import java.io.File
 object WhenRetValParser {
     fun parseRetVal(input: Input): DynamicRetVal {
         val statusCode = extractStatusCode(input)
-        if(!input.hasNext()) {
+        if (!input.hasNext()) {
             return getEmptyRetValWithStatus(statusCode)
         }
         return when (input.first()) {
@@ -22,9 +22,13 @@ object WhenRetValParser {
     private fun extractStatusCode(input: Input): Int {
         return try {
             val tokens = input.getTokens()
-            val statusTokenPosition = tokens.indexOf("status")
+            var statusTokenPosition = tokens.indexOf("status")
             val statusCode = tokens[statusTokenPosition + 1].toInt()
-            input.consume(statusTokenPosition, 2)
+            if (statusTokenPosition > 0 && tokens[statusTokenPosition - 1] == "with") {
+                input.consume(statusTokenPosition - 1, 3)
+            } else {
+                input.consume(statusTokenPosition, 2)
+            }
             statusCode
         } catch (e: Exception) {
             200
