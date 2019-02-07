@@ -18,6 +18,8 @@ pygmalion
 
 Then open your browser and navigate to `http://localhost/hallo-welt`.
 
+(Note that you can use single quotes for escaping.)
+
 ## RestTemplates
 There are quite a lot of useful Pygmalion commands. One of the most powerful ones is the `restTemplate` command. Its syntax is:
 ```
@@ -69,6 +71,11 @@ This will apply every line found in the provided file as if it had been entered 
 > when post /test then ${JSON.parse(body).name}
 ```
 
+### Status code
+```
+> when get /test then 'Works' status 200
+```
+
 ### Dynamic evaluation
 ```
 > when post /test then ${JSON.parse(queryParams).number + 3}
@@ -86,7 +93,6 @@ The following properties are injected by Pygmalion via bindings and can be acces
 |queryParams|JSON string representing all queryParams|
 |cookies|JSON string representing all cookies sent with the request|
 |uri|The request's URI|
-
 
 ## Documentation of all commands
 ```

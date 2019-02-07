@@ -25,9 +25,7 @@ class Input(rawInput: String) {
     }
 
     fun consume(number: Int) {
-        val _tokens = tokens.toMutableList()
-        repeat(number, { _tokens.removeAt(0) })
-        tokens = _tokens.toList()
+        consume(0, number)
     }
 
     fun isEmpty(): Boolean {
@@ -56,6 +54,12 @@ class Input(rawInput: String) {
 
     fun size(): Int {
         return tokens.size
+    }
+
+    fun consume(position: Int, number: Int) {
+        val _tokens = tokens.toMutableList()
+        repeat(number, { _tokens.removeAt(position) })
+        tokens = _tokens.toList()
     }
 
 }
