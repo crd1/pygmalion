@@ -20,7 +20,7 @@ object WhenHandler : Handler {
     }
 
     override fun getDocumentation(): String {
-        return "when \$method \$route [then] [from] \$value"
+        return "when \$method \$route [then] [from|status] \$value"
     }
 
     override fun canHandle(input: Input): Boolean {
@@ -53,7 +53,7 @@ object WhenHandler : Handler {
                 val route = portAndRoute.route
                 val resultCallback = object : HttpCallMapperUtil.ResultCallback {
                     override fun getResult(request: Request, response: Response): String {
-                        return WhenHandler.handleCall(request, retVal)
+                        return WhenHandler.handleCall(request, response, retVal)
                     }
                 }
                 HttpCallMapperUtil.map(method, route, parsedInput, resultCallback)
@@ -61,7 +61,8 @@ object WhenHandler : Handler {
         })
     }
 
-    private fun handleCall(request: Request, retVal: DynamicRetVal): String {
+    private fun handleCall(request: Request, response: Response, retVal: DynamicRetVal): String {
+        response.status(retVal.getStatusCode(request))
         return retVal.getRetVal(request)
     }
 
