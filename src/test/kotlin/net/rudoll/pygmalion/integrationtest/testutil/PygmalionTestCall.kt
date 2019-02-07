@@ -13,7 +13,7 @@ class PygmalionTestCall(private val target: String, private val port: Int) {
     private var expectedReturnValue: String = ""
     private var expectedStatusCode: Int = 200
     private var requestMethod: String = "GET"
-    private val requestBody: String = ""
+    private var requestBody: String = ""
 
 
     fun thenWeExceptPygmalionToReturn(value: String, statusCode: Int = 200): PygmalionTestCall {
@@ -23,6 +23,11 @@ class PygmalionTestCall(private val target: String, private val port: Int) {
     }
 
     fun and(): PygmalionTestCall {
+        return this
+    }
+
+    fun withBody(body: String) : PygmalionTestCall {
+        this.requestBody = body
         return this
     }
 

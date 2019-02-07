@@ -12,6 +12,7 @@ object PygmalionIntegrationTestSpecificationTable {
         whenInputIs("when get /test then with status 207").and().whenCallingPygmalionWith(target = "test").thenWeExceptPygmalionToReturn("", 207)
         whenInputIs("when get /test then hallo with status 207").and().whenCallingPygmalionWith(target = "test").thenWeExceptPygmalionToReturn("hallo", 207)
         whenInputIs("when post /test then status 207").and().whenCallingPygmalionWith(target = "test").withMethod("POST").thenWeExceptPygmalionToReturn("", 207)
+        whenInputIs("when post /test then \${body}").and().whenCallingPygmalionWith(target = "test").withMethod("POST").withBody("echo").thenWeExceptPygmalionToReturn("echo")
     }
 
     fun get(): Set<PygmalionTestSpecification> {
