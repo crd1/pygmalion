@@ -57,6 +57,9 @@ object WhenHandler : Handler {
                     }
                 }
                 HttpCallMapperUtil.map(method, route, parsedInput, resultCallback)
+                if (parsedInput.arguments.contains(AllowCorsArgument)) {
+                    HttpCallMapperUtil.allowPreflightRequests(route)
+                }
             }
         })
     }

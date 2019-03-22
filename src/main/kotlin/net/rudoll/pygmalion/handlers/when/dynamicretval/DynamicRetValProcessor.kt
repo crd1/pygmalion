@@ -1,6 +1,7 @@
 package net.rudoll.pygmalion.handlers.`when`.dynamicretval
 
 import com.google.gson.Gson
+import net.rudoll.pygmalion.util.NashornExtension
 import spark.Request
 import java.util.regex.Pattern
 import javax.script.ScriptContext
@@ -15,6 +16,7 @@ class DynamicRetValProcessor {
     fun process(pattern: String, request: Request): String {
         return try {
             val bindings = engine.getBindings(ScriptContext.ENGINE_SCOPE)
+            NashornExtension.extend(bindings)
             bindings["counter"] = retValCounter.call()
             bindings["timestamp"] = System.currentTimeMillis().toString()
             bindings["body"] = request.body()

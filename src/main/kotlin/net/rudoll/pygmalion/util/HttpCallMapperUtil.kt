@@ -13,6 +13,8 @@ object HttpCallMapperUtil {
     private val ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin"
     private val ACCESS_CONTROL_ALLOW_HEADERS = "Access-Control-Allow-Headers"
     private val ACCESS_CONTROL_ALLOW_METHODS = "Access-Control-Allow-Methods"
+    private val ACCESS_CONTROL_ALLOW_CREDENTIALS = "Access-Control-Allow-Credentials"
+    private val ORIGIN = "Origin"
 
     fun map(method: String, route: String, parsedInput: ParsedInput, resultCallback: ResultCallback) {
         val requestHandler = { request: Request, response: Response -> handleCall(request, response, parsedInput, resultCallback) }
@@ -31,7 +33,7 @@ object HttpCallMapperUtil {
         val shouldLog = arguments.contains(LogArgument)
         val shouldAllowCORS = arguments.contains(AllowCorsArgument)
         if (shouldAllowCORS) {
-            response.header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
+            passAccessControl(request, response)
         }
         val result = resultCallback.getResult(request, response)
         if (shouldLog) {
@@ -46,12 +48,17 @@ object HttpCallMapperUtil {
     }
 
     fun allowPreflightRequests(route: String) {
-        Spark.options(route, { _, response -> successfulPreflight(response) })
+        Spark.options(route, { request, response -> successfulPreflight(request, response) })
     }
 
-    private fun successfulPreflight(response: Response): String {
-        response.header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
-        response.header(ACCESS_CONTROL_ALLOW_HEADERS, "content-type")
+    private fun passAccessControl(request: Request, response: Response) {
+        response.header(ACCESS_CONTROL_ALLOW_ORIGIN, request.headers(ORIGIN))
+        response.header(ACCESS_CONTROL_ALLOW_CREDENTIALS, "true")
+    }
+
+    private fun successfulPreflight(request: Request, response: Response): String {
+        passAccessControl(request, response)
+        response.header(ACCESS_CONTROL_ALLOW_HEADERS, "content-type, authorization")
         response.header(ACCESS_CONTROL_ALLOW_METHODS, "POST, GET, PUT, OPTIONS, DELETE")
         return ""
     }
