@@ -10,6 +10,7 @@ import io.swagger.v3.oas.models.PathItem
 import io.swagger.v3.oas.models.media.ArraySchema
 import io.swagger.v3.oas.models.media.ComposedSchema
 import io.swagger.v3.oas.models.media.Schema
+import io.swagger.v3.oas.models.parameters.Parameter
 import io.swagger.v3.oas.models.responses.ApiResponses
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.ParsedArgument
 import net.rudoll.pygmalion.model.Action
@@ -57,13 +58,40 @@ class OpenApiContext(private val openAPI: OpenAPI) {
         return object : HttpCallMapperUtil.ResultCallback {
             override fun getResult(request: Request, response: Response): String {
                 return try {
-                    respond(response, operation.responses)
+                    val parameterValidationResult = validateParameters(request, operation)
+                    if (!parameterValidationResult.isOk) {
+                        response.status(400)
+                        return parameterValidationResult.error
+                    } else respond(response, operation.responses)
                 } catch (e: Exception) {
                     e.printStackTrace()
                     ""
                 }
             }
         }
+    }
+
+
+    private fun validateParameters(request: Request, operation: Operation): ValidationResponse {
+        for (parameter in operation.parameters) {
+            if (!parameter.required) {
+                continue
+            }
+            if (parameter.`in` == "query") {
+                val parameterValidationResult = validateQueryParameter(request, parameter)
+                if (!parameterValidationResult.isOk) {
+                    return parameterValidationResult
+                }
+            }
+        }
+        return ValidationResponse(true, "")
+    }
+
+    private fun validateQueryParameter(request: Request, parameter: Parameter): ValidationResponse {
+        if (!request.queryParams().contains(parameter.name)) {
+            return ValidationResponse(false, "Query parameter missing: ${parameter.name}")
+        }
+        return ValidationResponse(true, "")
     }
 
     private fun respond(response: Response, responses: ApiResponses): String {
