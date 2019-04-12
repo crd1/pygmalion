@@ -1,16 +1,9 @@
 package net.rudoll.pygmalion.handlers.openapi
 
-import com.google.gson.JsonArray
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
-import com.google.gson.JsonPrimitive
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.Operation
 import io.swagger.v3.oas.models.PathItem
-import io.swagger.v3.oas.models.media.ArraySchema
-import io.swagger.v3.oas.models.media.ComposedSchema
 import io.swagger.v3.oas.models.media.Schema
-import io.swagger.v3.oas.models.parameters.Parameter
 import io.swagger.v3.oas.models.responses.ApiResponses
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.ParsedArgument
 import net.rudoll.pygmalion.model.Action
@@ -18,7 +11,6 @@ import net.rudoll.pygmalion.model.ParsedInput
 import net.rudoll.pygmalion.util.HttpCallMapperUtil
 import spark.Request
 import spark.Response
-import java.lang.IllegalStateException
 
 class OpenApiContext(private val openAPI: OpenAPI) {
 
@@ -58,10 +50,10 @@ class OpenApiContext(private val openAPI: OpenAPI) {
         return object : HttpCallMapperUtil.ResultCallback {
             override fun getResult(request: Request, response: Response): String {
                 return try {
-                    val parameterValidationResult = validateParameters(request, operation)
+                    val parameterValidationResult = RequestValidator(openAPI).validateRequest(request, operation)
                     if (!parameterValidationResult.isOk) {
                         response.status(400)
-                        return parameterValidationResult.error
+                        return parameterValidationResult.message
                     } else respond(response, operation.responses)
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -69,29 +61,6 @@ class OpenApiContext(private val openAPI: OpenAPI) {
                 }
             }
         }
-    }
-
-
-    private fun validateParameters(request: Request, operation: Operation): ValidationResponse {
-        for (parameter in operation.parameters) {
-            if (!parameter.required) {
-                continue
-            }
-            if (parameter.`in` == "query") {
-                val parameterValidationResult = validateQueryParameter(request, parameter)
-                if (!parameterValidationResult.isOk) {
-                    return parameterValidationResult
-                }
-            }
-        }
-        return ValidationResponse(true, "")
-    }
-
-    private fun validateQueryParameter(request: Request, parameter: Parameter): ValidationResponse {
-        if (!request.queryParams().contains(parameter.name)) {
-            return ValidationResponse(false, "Query parameter missing: ${parameter.name}")
-        }
-        return ValidationResponse(true, "")
     }
 
     private fun respond(response: Response, responses: ApiResponses): String {
@@ -108,50 +77,16 @@ class OpenApiContext(private val openAPI: OpenAPI) {
         if (mediaType.example != null) {
             return mediaType.example.toString()
         }
-        val jsonObject = getFromSchema(mediaType.schema)
+        val jsonObject = ExampleResponseGenerator(openAPI).getFromSchema(mediaType.schema)
         return jsonObject.toString()
     }
 
-    private fun getFromSchema(schema: Schema<*>): JsonElement {
-        return when {
-            schema.properties != null -> {
-                val jsonObject = JsonObject()
-                schema.properties.forEach { property -> jsonObject.add(property.key, getFromSchema(property.value)) }
-                jsonObject
-            }
-            schema is ComposedSchema -> getFromComposedSchema(schema)
-            schema.`$ref` != null -> getFromSchema(getSchemaByRef(schema.`$ref`))
-            schema.type == "array" -> {
-                val jsonArray = JsonArray()
-                jsonArray.add(getFromSchema(getSchemaByRef((schema as ArraySchema).items.`$ref`)))
-                return jsonArray
-            }
-            else -> getPrimitive(schema)
+    companion object {
+
+        fun getSchemaByRef(ref: String, openAPI: OpenAPI): Schema<*> {
+            val components = openAPI.components
+            val refWithoutPrefix = ref.removePrefix("#/components/schemas/")
+            return components.schemas[refWithoutPrefix]!!
         }
-    }
-
-    private fun getFromComposedSchema(composedSchema: ComposedSchema): JsonElement {
-        val mergedSchemas = mutableSetOf<Schema<*>>()
-        //frankly, I don't care
-        composedSchema.allOf?.forEach { schema -> mergedSchemas.add(schema) }
-        composedSchema.anyOf?.forEach { schema -> mergedSchemas.add(schema) }
-        composedSchema.oneOf?.forEach { schema -> mergedSchemas.add(schema) }
-        return getFromSchema(mergedSchemas.first())
-    }
-
-    private fun getPrimitive(schema: Schema<*>): JsonElement {
-        return when {
-            schema.type == "string" -> JsonPrimitive("string")
-            schema.type == "integer" -> JsonPrimitive(0)
-            schema.type == "number" -> JsonPrimitive(0.0)
-            schema.type == "boolean" -> JsonPrimitive(false)
-            else -> throw IllegalStateException("Schema could not be parsed: $schema")
-        }
-    }
-
-    private fun getSchemaByRef(ref: String): Schema<*> {
-        val components = openAPI.components
-        val refWithoutPrefix = ref.removePrefix("#/components/schemas/")
-        return components.schemas[refWithoutPrefix]!!
     }
 }
