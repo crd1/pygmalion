@@ -41,15 +41,18 @@ class RequestValidator(private val openAPI: OpenAPI) {
         }
         val contentSpecification = requestBody.content[request.contentType()]
                 ?: return ValidationResult(false, "Request body has wrong content type: ${request.contentType()}")
-        val contentValidationResult = validateContent(request.body(), contentSpecification.schema)
+        val contentValidationResult = validateContent(request.body(), contentSpecification.schema, request.contentType())
         if (!contentValidationResult.isOk) {
             return contentValidationResult
         }
         return ValidationResult(true, "Body is OK")
     }
 
-    private fun validateContent(body: String, contentSpecification: Schema<*>): ValidationResult {
-        //TODO forms, text/plain etc? currently we only support application/json
+    private fun validateContent(body: String, contentSpecification: Schema<*>, contentType: String): ValidationResult {
+        if (contentType == "text/plain") {
+            return ValidationResult(true, "text/plain does not need to be validated.")
+        }
+        //TODO forms, exotic mime types?
         val parsedBody = jsonParser.parse(body)
         val bodyValidationResult = validateJsonAgainstSchema(parsedBody, contentSpecification)
         if (!bodyValidationResult.isOk) {
