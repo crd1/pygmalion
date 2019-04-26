@@ -84,12 +84,6 @@ In general, expressions within `${}` are evaluated using the Nashorn Project, i.
 
 The following properties are injected by Pygmalion via bindings and can be accessed from within the expressions:
 
-## Experimental: OpenAPI support
-```
-> openapi spec.yml
-```
-Assuming you have a json or yaml specification in OpenAPI format, you can use pygmalion to spawn a test server. (This is still an incubating feature though.)
-
 |Property|Description|
 |---|---|
 |body|Request body|
@@ -99,6 +93,14 @@ Assuming you have a json or yaml specification in OpenAPI format, you can use py
 |queryParams|JSON string representing all queryParams|
 |cookies|JSON string representing all cookies sent with the request|
 |uri|The request's URI|
+
+## Experimental: OpenAPI support
+```
+> openapi spec.yml
+```
+Assuming you have a json or yaml specification in OpenAPI format, you can use pygmalion to spawn a test server. (This is still an incubating feature though.)
+
+
 
 ## Documentation of all commands
 ```
