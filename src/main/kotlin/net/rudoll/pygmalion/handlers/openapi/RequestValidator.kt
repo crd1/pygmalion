@@ -52,7 +52,7 @@ class RequestValidator(private val openAPI: OpenAPI) {
         if (contentType == "text/plain") {
             return ValidationResult(true, "text/plain does not need to be validated.")
         }
-        //TODO forms, exotic mime types?
+        // we only support json bodies from here on.
         val parsedBody = jsonParser.parse(body)
         val bodyValidationResult = validateJsonAgainstSchema(parsedBody, contentSpecification)
         if (!bodyValidationResult.isOk) {
