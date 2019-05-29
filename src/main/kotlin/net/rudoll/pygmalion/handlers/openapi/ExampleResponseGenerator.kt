@@ -23,7 +23,7 @@ class ExampleResponseGenerator(val openAPI: OpenAPI) {
             schema.`$ref` != null -> getFromSchema(OpenApiContext.getSchemaByRef(schema.`$ref`, openAPI))
             schema.type == "array" -> {
                 val jsonArray = JsonArray()
-                jsonArray.add(getFromSchema(OpenApiContext.getSchemaByRef((schema as ArraySchema).items.`$ref`, openAPI)))
+                jsonArray.add(getFromSchema((schema as ArraySchema).items))
                 return jsonArray
             }
             else -> getPrimitive(schema)
