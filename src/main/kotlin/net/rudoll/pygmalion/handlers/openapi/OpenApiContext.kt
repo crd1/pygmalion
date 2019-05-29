@@ -3,6 +3,7 @@ package net.rudoll.pygmalion.handlers.openapi
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.Operation
 import io.swagger.v3.oas.models.PathItem
+import io.swagger.v3.oas.models.media.MediaType
 import io.swagger.v3.oas.models.media.Schema
 import io.swagger.v3.oas.models.responses.ApiResponses
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.ParsedArgument
@@ -13,6 +14,8 @@ import spark.Request
 import spark.Response
 
 class OpenApiContext(private val openAPI: OpenAPI) {
+
+    private val PREFERRED_CONTENT_TYPE: String = "application/json"
 
     fun apply(parsedInput: ParsedInput) {
         val paths = openAPI.paths
@@ -71,7 +74,7 @@ class OpenApiContext(private val openAPI: OpenAPI) {
             return ""
         }
         val content = apiResponse.content
-        val firstContentType = content.keys.first()
+        val firstContentType = getPreferredContentType(content.keys)
         response.header("Content-Type", firstContentType)
         val mediaType = content[firstContentType]!!
         if (mediaType.example != null) {
@@ -79,6 +82,13 @@ class OpenApiContext(private val openAPI: OpenAPI) {
         }
         val jsonObject = ExampleResponseGenerator(openAPI).getFromSchema(mediaType.schema)
         return jsonObject.toString()
+    }
+
+    private fun getPreferredContentType(contentTypes: Set<String>): String {
+        if (contentTypes.contains(PREFERRED_CONTENT_TYPE)) {
+            return PREFERRED_CONTENT_TYPE
+        }
+        return contentTypes.first()
     }
 
     companion object {
