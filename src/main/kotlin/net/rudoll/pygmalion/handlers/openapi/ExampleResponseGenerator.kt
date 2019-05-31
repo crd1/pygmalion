@@ -9,6 +9,7 @@ import io.swagger.v3.oas.models.media.ArraySchema
 import io.swagger.v3.oas.models.media.ComposedSchema
 import io.swagger.v3.oas.models.media.Schema
 import java.lang.IllegalStateException
+import java.util.*
 
 class ExampleResponseGenerator(val openAPI: OpenAPI) {
 
@@ -41,11 +42,19 @@ class ExampleResponseGenerator(val openAPI: OpenAPI) {
 
     private fun getPrimitive(schema: Schema<*>): JsonElement {
         return when {
-            schema.type == "string" -> JsonPrimitive("string")
+            schema.type == "string" -> getStringPrimitive(schema.format)
             schema.type == "integer" -> JsonPrimitive(0)
             schema.type == "number" -> JsonPrimitive(0.0)
             schema.type == "boolean" -> JsonPrimitive(false)
             else -> throw IllegalStateException("Schema could not be parsed: $schema")
         }
+    }
+
+    private fun getStringPrimitive(format: String?): JsonElement {
+        var value = "string"
+        if (format != null && format.toLowerCase() == "uuid") {
+            value = UUID.randomUUID().toString()
+        }
+        return JsonPrimitive(value)
     }
 }
