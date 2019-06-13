@@ -17,7 +17,7 @@ class RequestValidator(private val openAPI: OpenAPI) {
     fun validateRequest(request: Request, operation: Operation): ValidationResult {
         if (operation.parameters != null) {
             for (parameter in operation.parameters) {
-                if (!parameter.required) {
+                if (parameter.required == null || !parameter.required) {
                     continue
                 }
                 val parameterValidationResult = validateUrlParameter(request, parameter)
