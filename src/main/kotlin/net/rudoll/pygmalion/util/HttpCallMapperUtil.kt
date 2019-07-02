@@ -3,10 +3,12 @@ package net.rudoll.pygmalion.util
 import net.rudoll.pygmalion.cli.Cli
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.AllowCorsArgument
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.LogArgument
+import net.rudoll.pygmalion.handlers.port.PortHandler
 import net.rudoll.pygmalion.model.ParsedInput
 import spark.Request
 import spark.Response
 import spark.Spark
+import spark.Spark.halt
 
 object HttpCallMapperUtil {
 
@@ -17,7 +19,12 @@ object HttpCallMapperUtil {
     private val ORIGIN = "Origin"
 
     fun map(method: String, route: String, parsedInput: ParsedInput, resultCallback: ResultCallback) {
+        if (!PortHandler.portSet) {
+            parsedInput.logs.add("Setting default port 80")
+            PortUtil.setPort(80)
+        }
         val requestHandler = { request: Request, response: Response -> handleCall(request, response, parsedInput, resultCallback) }
+        parsedInput.logs.add("Mapping route $route for method $method")
         when (method.toLowerCase()) {
             "get" -> Spark.get(route, requestHandler)
             "post" -> Spark.post(route, requestHandler)
@@ -48,7 +55,7 @@ object HttpCallMapperUtil {
     }
 
     fun allowPreflightRequests(route: String) {
-        Spark.options(route, { request, response -> successfulPreflight(request, response) })
+        Spark.options(route) { request, response -> successfulPreflight(request, response) }
     }
 
     private fun passAccessControl(request: Request, response: Response) {
@@ -61,5 +68,15 @@ object HttpCallMapperUtil {
         response.header(ACCESS_CONTROL_ALLOW_HEADERS, "content-type, authorization")
         response.header(ACCESS_CONTROL_ALLOW_METHODS, "POST, GET, PUT, OPTIONS, DELETE")
         return ""
+    }
+
+    fun ensureAllQueryParamsPresent(request: Request, params: List<String>): Boolean {
+        val queryParams = request.queryParams()
+        for (param in params) {
+            if (!queryParams.contains(param)) {
+                halt(400, "Required parameter $param not present")
+            }
+        }
+        return request.queryParams().containsAll(params)
     }
 }
