@@ -22,6 +22,6 @@ class TokenEndpointCallback : HttpCallMapperUtil.ResultCallback {
             halt(401)
             return ""
         }
-        return OAuthGuard.issueAccessToken(redirectUri, clientId)
+        return OAuthGuard.issueAccessToken(authorizationCode, redirectUri, clientId)
     }
 }
