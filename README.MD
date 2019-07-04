@@ -105,7 +105,7 @@ Assuming you have a json or yaml specification in OpenAPI format, you can use py
 > oauth /oauth
 ```
 You can use Pygmalion to spawn an OAuth2 test server. The above command creates routes `GET /oauth/authorize` and `POST /oauth/token` to allow for the Authorization Code Grant Flow (see https://tools.ietf.org/html/rfc6749#section-4.1).
-The token endpoint issues JWTs that can be verified using the public key in `src/main/resources`. (Obviously, this key pair is not a secret at all.. ^^)
+The authorization endpoint simply redirects to the specified `redirect_uri` providing an (expiring) authorization code and the original `state`. The token endpoint validates the authorization code and issues JWTs that can be verified using the public key in `src/main/resources`. (Obviously, this key pair is not a secret at all..)
 
 ## Documentation of all commands
 ```
