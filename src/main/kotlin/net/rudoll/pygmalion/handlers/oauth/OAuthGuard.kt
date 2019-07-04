@@ -36,7 +36,7 @@ object OAuthGuard {
 
     fun issueAccessToken(authorizationCode: String, redirectUri: String, clientId: String): String {
         issuedAuthorizationCodes.removeAll(findAuthorizationCodes(redirectUri, clientId, authorizationCode)) // can only be used once
-        val claims: Map<String, Any> = mapOf("exp" to createExpirationTime()) //TODO add claims?
+        val claims: Map<String, Any> = mapOf("exp" to createExpirationTime())
         return gson.toJson(AccessTokenResponse(JWTCreator.createJWT(claims, privateKey), "bearer", ACCESS_TOKEN_EXPIRATION_TIME.toLong() / 1000))
     }
 
