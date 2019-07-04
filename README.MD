@@ -94,13 +94,18 @@ The following properties are injected by Pygmalion via bindings and can be acces
 |cookies|JSON string representing all cookies sent with the request|
 |uri|The request's URI|
 
-## Experimental: OpenAPI support
+## OpenAPI support
 ```
 > openapi spec.yml
 ```
 Assuming you have a json or yaml specification in OpenAPI format, you can use pygmalion to spawn a test server. (This is still an incubating feature though.)
 
-
+## OAuth supprt
+```
+> oauth /oauth
+```
+You can use Pygmalion to spawn an OAuth2 test server. The above command creates routes `GET /oauth/authorize` and `POST /oauth/token` to allow for the Authorization Code Grant Flow (see https://tools.ietf.org/html/rfc6749#section-4.1).
+The token endpoint issues JWTs that can be verified using the public key in `src/main/resources`. (Obviously, this key pair is not a secret at all.. ^^)
 
 ## Documentation of all commands
 ```
