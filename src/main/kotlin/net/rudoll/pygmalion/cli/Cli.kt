@@ -14,17 +14,11 @@ object Cli {
 
     internal val handlers = findHandlers("net.rudoll.pygmalion.handlers").filter { it.getParseStage() != ParseStage.NO_PASS }.sortedBy { it.getParseStage().order }
     private val version = PropertiesProvider.getVersion()
+    private val prompt = "pygmalion> "
     private val scanner = Scanner(System.`in`)
 
-    private fun welcome() {
-        System.out.println("*********************************************")
-        System.out.println("Pygmalion version $version, written by crd")
-        System.out.println("*********************************************\n")
-        prompt()
-    }
-
     private fun prompt() {
-        System.out.print("> ")
+        System.out.print(prompt)
     }
 
     fun eval(rawInput: String) {
@@ -53,7 +47,7 @@ object Cli {
 
 
     fun repl(initialCommand: String? = null) {
-        welcome()
+        prompt()
         initialCommand?.let {
             if (it.isNotEmpty()) {
                 System.out.println(it)
@@ -78,7 +72,9 @@ object Cli {
     }
 
     fun removePrompt() {
-        System.out.print("\b\b")
+        repeat(prompt.length) {
+            System.out.print("\b")
+        }
     }
 
     enum class PrintPromptBehaviour {
