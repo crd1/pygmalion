@@ -3,6 +3,7 @@ package net.rudoll.pygmalion.util
 import net.rudoll.pygmalion.cli.Cli
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.AllowCorsArgument
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.LogArgument
+import net.rudoll.pygmalion.handlers.arguments.parsedarguments.LogBodyArgument
 import net.rudoll.pygmalion.handlers.port.PortHandler
 import net.rudoll.pygmalion.model.ParsedInput
 import spark.Request
@@ -37,7 +38,7 @@ object HttpCallMapperUtil {
 
     private fun handleCall(request: Request, response: Response, parsedInput: ParsedInput, resultCallback: ResultCallback): String {
         val arguments = parsedInput.arguments
-        val shouldLog = arguments.contains(LogArgument)
+        val shouldLog = arguments.contains(LogArgument) || arguments.contains(LogBodyArgument)
         val shouldAllowCORS = arguments.contains(AllowCorsArgument)
         if (shouldAllowCORS) {
             passAccessControl(request, response)
@@ -45,7 +46,7 @@ object HttpCallMapperUtil {
         val result = resultCallback.getResult(request, response)
         if (shouldLog) {
             Cli.removePrompt()
-            Cli.print("< ${DateUtil.now()} | ${request.url()} | Status ${response.status()} | Body length: ${result.length}")
+            Cli.print("< ${DateUtil.now()} | ${request.url()} | Status ${response.status()} | Body length: ${result.length}${if (arguments.contains(LogBodyArgument)) " | Body: ${request.body()} | Response: $result" else ""}")
         }
         return result
     }
