@@ -2,6 +2,7 @@ package net.rudoll.pygmalion.util
 
 import net.rudoll.pygmalion.cli.Cli
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.AllowCorsArgument
+import net.rudoll.pygmalion.handlers.arguments.parsedarguments.ContentTypeArgument
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.LogArgument
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.LogBodyArgument
 import net.rudoll.pygmalion.handlers.port.PortHandler
@@ -48,7 +49,17 @@ object HttpCallMapperUtil {
             Cli.removePrompt()
             Cli.print("< ${DateUtil.now()} | ${request.url()} | Status ${response.status()} | Body length: ${result.length}${if (arguments.contains(LogBodyArgument)) " | Body: ${request.body()} | Response: $result" else ""}")
         }
+        setContentType(response, parsedInput)
         return result
+    }
+
+    private fun setContentType(response: Response, parsedInput: ParsedInput) {
+        for (argument in parsedInput.arguments) {
+            if (argument is ContentTypeArgument) {
+                response.header("Content-Type", argument.contentType)
+                break
+            }
+        }
     }
 
     interface ResultCallback {
