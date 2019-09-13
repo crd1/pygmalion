@@ -4,6 +4,7 @@ import net.rudoll.pygmalion.handlers.Handler
 import net.rudoll.pygmalion.model.Input
 import net.rudoll.pygmalion.model.ParseStage
 import net.rudoll.pygmalion.model.ParsedInput
+import net.rudoll.pygmalion.model.State.portSet
 import spark.Spark
 
 object PortHandler : Handler {
@@ -17,8 +18,6 @@ object PortHandler : Handler {
     override fun canHandle(input: Input): Boolean {
         return input.first() == "port"
     }
-
-    var portSet = false
 
     override fun handle(input: Input, parsedInput: ParsedInput) {
         if (portSet) {

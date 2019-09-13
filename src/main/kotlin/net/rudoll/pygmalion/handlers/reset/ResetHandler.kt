@@ -2,11 +2,11 @@ package net.rudoll.pygmalion.handlers.reset
 
 import net.rudoll.pygmalion.handlers.Handler
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.ParsedArgument
-import net.rudoll.pygmalion.handlers.port.PortHandler
 import net.rudoll.pygmalion.model.Action
 import net.rudoll.pygmalion.model.Input
 import net.rudoll.pygmalion.model.ParseStage
 import net.rudoll.pygmalion.model.ParsedInput
+import net.rudoll.pygmalion.model.State
 import spark.Spark
 
 object ResetHandler : Handler {
@@ -14,7 +14,7 @@ object ResetHandler : Handler {
         parsedInput.actions.add(object : Action {
             override fun run(arguments: Set<ParsedArgument>) {
                 Spark.stop()
-                PortHandler.portSet = false
+                State.reset()
             }
         })
         input.consume(1)
