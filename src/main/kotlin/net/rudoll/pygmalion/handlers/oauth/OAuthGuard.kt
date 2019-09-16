@@ -1,14 +1,14 @@
 package net.rudoll.pygmalion.handlers.oauth
 
 import com.google.gson.Gson
-import javafx.util.Duration
 import net.rudoll.pygmalion.util.RandomizerUtil
+import java.util.concurrent.TimeUnit
 
 object OAuthGuard {
 
     private val issuedAuthorizationCodes = mutableSetOf<AuthorizationCode>()
-    internal val AUTHORIZATION_CODE_EXPIRATION_TIME_MS = Duration.minutes(10.0).toMillis()
-    private val ACCESS_TOKEN_EXPIRATION_TIME = Duration.minutes(60.0).toMillis()
+    internal val AUTHORIZATION_CODE_EXPIRATION_TIME_MS = TimeUnit.MILLISECONDS.convert(10, TimeUnit.MINUTES)
+    private val ACCESS_TOKEN_EXPIRATION_TIME = TimeUnit.MILLISECONDS.convert(60, TimeUnit.MINUTES)
     private val privateKey = readPrivateKey()
     private val gson = Gson()
 
@@ -41,7 +41,7 @@ object OAuthGuard {
     }
 
     private fun createExpirationTime(): Long {
-        return Duration.millis(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION_TIME).toSeconds().toLong()
+        return TimeUnit.SECONDS.convert(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION_TIME, TimeUnit.MILLISECONDS)
     }
 
     data class AccessTokenResponse(val access_token: String, val token_type: String, val expires_in: Long)
