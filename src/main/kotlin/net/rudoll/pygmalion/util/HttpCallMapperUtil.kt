@@ -5,7 +5,7 @@ import net.rudoll.pygmalion.handlers.arguments.parsedarguments.AllowCorsArgument
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.ContentTypeArgument
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.LogArgument
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.LogBodyArgument
-import net.rudoll.pygmalion.handlers.port.PortHandler
+import net.rudoll.pygmalion.handlers.openapi.export.OpenApiMonitor
 import net.rudoll.pygmalion.model.ParsedInput
 import net.rudoll.pygmalion.model.State.chaosMonkeyProbability
 import net.rudoll.pygmalion.model.State.portSet
@@ -35,8 +35,12 @@ object HttpCallMapperUtil {
             "put" -> Spark.put(route, requestHandler)
             "delete" -> Spark.delete(route, requestHandler)
             "options" -> Spark.options(route, requestHandler)
-            else -> parsedInput.errors.add("Unknown method.")
+            else -> {
+                parsedInput.errors.add("Unknown method.")
+                return
+            }
         }
+        OpenApiMonitor.add(method, route)
     }
 
     private fun handleCall(request: Request, response: Response, parsedInput: ParsedInput, resultCallback: ResultCallback): String {
