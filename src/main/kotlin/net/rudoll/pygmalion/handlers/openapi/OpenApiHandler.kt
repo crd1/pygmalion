@@ -1,11 +1,10 @@
 package net.rudoll.pygmalion.handlers.openapi
 
 import net.rudoll.pygmalion.handlers.Handler
-import net.rudoll.pygmalion.handlers.port.PortHandler
 import net.rudoll.pygmalion.model.Input
 import net.rudoll.pygmalion.model.ParseStage
 import net.rudoll.pygmalion.model.ParsedInput
-import net.rudoll.pygmalion.model.State.portSet
+import net.rudoll.pygmalion.model.StateHolder
 import net.rudoll.pygmalion.util.PortUtil
 import java.io.File
 
@@ -18,7 +17,7 @@ object OpenApiHandler : Handler {
             parsedInput.errors.add("OpenApi specification file does not exist.")
             return
         }
-        if (!portSet) {
+        if (!StateHolder.state.portSet) {
             parsedInput.logs.add("Setting default port")
             PortUtil.setPort(80)
         }

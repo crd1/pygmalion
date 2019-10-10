@@ -6,7 +6,7 @@ import net.rudoll.pygmalion.model.Action
 import net.rudoll.pygmalion.model.Input
 import net.rudoll.pygmalion.model.ParseStage
 import net.rudoll.pygmalion.model.ParsedInput
-import net.rudoll.pygmalion.model.State
+import net.rudoll.pygmalion.model.StateHolder
 import spark.Spark
 
 object ResetHandler : Handler {
@@ -14,7 +14,7 @@ object ResetHandler : Handler {
         parsedInput.actions.add(object : Action {
             override fun run(arguments: Set<ParsedArgument>) {
                 Spark.stop()
-                State.reset()
+                StateHolder.reset()
             }
         })
         input.consume(1)

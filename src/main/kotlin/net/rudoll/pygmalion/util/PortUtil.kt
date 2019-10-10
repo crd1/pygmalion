@@ -1,22 +1,22 @@
 package net.rudoll.pygmalion.util
 
-import net.rudoll.pygmalion.model.State.portSet
+import net.rudoll.pygmalion.model.StateHolder
 import spark.Spark
 
 object PortUtil {
     fun setPort(port: Int?): Boolean {
         if (port == null) {
-            if (!portSet) {
+            if (!StateHolder.state.portSet) {
                 Spark.port(80)
-                portSet = true
+                StateHolder.state.portSet = true
             }
             return true
         }
-        if (portSet) {
+        if (StateHolder.state.portSet) {
             return false
         }
         Spark.port(port)
-        portSet = true
+        StateHolder.state.portSet = true
         return true
     }
 

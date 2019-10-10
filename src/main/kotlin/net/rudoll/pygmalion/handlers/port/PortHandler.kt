@@ -4,7 +4,7 @@ import net.rudoll.pygmalion.handlers.Handler
 import net.rudoll.pygmalion.model.Input
 import net.rudoll.pygmalion.model.ParseStage
 import net.rudoll.pygmalion.model.ParsedInput
-import net.rudoll.pygmalion.model.State.portSet
+import net.rudoll.pygmalion.model.StateHolder
 import spark.Spark
 
 object PortHandler : Handler {
@@ -20,12 +20,12 @@ object PortHandler : Handler {
     }
 
     override fun handle(input: Input, parsedInput: ParsedInput) {
-        if (portSet) {
+        if (StateHolder.state.portSet) {
             parsedInput.errors.add("Port was already set. Please use another instance of this application.")
             return
         }
         Spark.port(input.second().toInt())
-        portSet = true
+        StateHolder.state.portSet = true
         input.consume(2)
     }
 }

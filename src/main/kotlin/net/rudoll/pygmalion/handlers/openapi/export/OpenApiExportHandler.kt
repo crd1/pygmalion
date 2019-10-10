@@ -19,7 +19,7 @@ object OpenApiExportHandler : Handler {
         input.consume(1)
         parsedInput.actions.add(object : Action {
             override fun run(arguments: Set<ParsedArgument>) {
-                file.writeText(if (arguments.contains(JsonArgument)) Json.pretty().writeValueAsString(State.openAPISpec) else Yaml.pretty().writeValueAsString(State.openAPISpec))
+                file.writeText(if (arguments.contains(JsonArgument)) Json.pretty().writeValueAsString(StateHolder.state.openAPISpec) else Yaml.pretty().writeValueAsString(StateHolder.state.openAPISpec))
             }
         })
     }

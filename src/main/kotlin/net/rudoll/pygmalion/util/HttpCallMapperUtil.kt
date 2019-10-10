@@ -7,8 +7,7 @@ import net.rudoll.pygmalion.handlers.arguments.parsedarguments.LogArgument
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.LogBodyArgument
 import net.rudoll.pygmalion.handlers.openapi.export.OpenApiMonitor
 import net.rudoll.pygmalion.model.ParsedInput
-import net.rudoll.pygmalion.model.State.chaosMonkeyProbability
-import net.rudoll.pygmalion.model.State.portSet
+import net.rudoll.pygmalion.model.StateHolder
 import spark.Request
 import spark.Response
 import spark.Spark
@@ -23,7 +22,7 @@ object HttpCallMapperUtil {
     private val ORIGIN = "Origin"
 
     fun map(method: String, route: String, parsedInput: ParsedInput, resultCallback: ResultCallback) {
-        if (!portSet) {
+        if (!StateHolder.state.portSet) {
             parsedInput.logs.add("Setting default port 80")
             PortUtil.setPort(80)
         }
@@ -61,7 +60,7 @@ object HttpCallMapperUtil {
     }
 
     private fun handleChaosMonkey() {
-        if (Math.random() * 100 < chaosMonkeyProbability) {
+        if (Math.random() * 100 < StateHolder.state.chaosMonkeyProbability) {
             halt(503)
         }
     }

@@ -2,19 +2,16 @@ package net.rudoll.pygmalion.handlers.openapi.export
 
 import io.swagger.v3.oas.models.Operation
 import io.swagger.v3.oas.models.PathItem
-import net.rudoll.pygmalion.model.State
+import net.rudoll.pygmalion.model.StateHolder
 
 object OpenApiMonitor {
 
     fun add(method: String, route: String) {
-        //TODO don't overwrite
-        State.openAPISpec.path(route, getPathItem(method))
-    }
-
-    private fun getPathItem(method: String): PathItem {
-        val pathItem = PathItem()
-        addMethod(pathItem, method)
-        return pathItem
+        val paths = StateHolder.state.openAPISpec.paths
+        if (paths == null || paths[route] == null) {
+            StateHolder.state.openAPISpec.path(route, PathItem())
+        }
+        addMethod(StateHolder.state.openAPISpec.paths[route]!!, method)
     }
 
     private fun addMethod(pathItem: PathItem, method: String) {
