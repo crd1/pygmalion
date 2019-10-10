@@ -10,7 +10,7 @@ class FileRetVal(private val file: File, private val statusCode: Int) : DynamicR
         return dynamicRetValProcessor.process(file.readText(), request)
     }
 
-    override fun getStatusCode(request: Request): Int {
+    override fun getStatusCode(): Int {
         return statusCode
     }
 }

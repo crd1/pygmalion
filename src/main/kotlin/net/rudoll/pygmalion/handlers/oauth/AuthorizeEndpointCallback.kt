@@ -7,6 +7,10 @@ import spark.Response
 import spark.Spark.halt
 
 class AuthorizeEndpointCallback : HttpCallMapperUtil.ResultCallback {
+    override fun getResultCallbackDescription(): HttpCallMapperUtil.ResultCallback.ResultCallbackDescription? {
+        return null
+    }
+
     override fun getResult(request: Request, response: Response): String {
         if (!ensureAllQueryParamsPresent(request, listOf("redirect_uri", "client_id"))) {
             return ""

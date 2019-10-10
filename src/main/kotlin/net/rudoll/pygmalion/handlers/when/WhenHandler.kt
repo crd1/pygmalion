@@ -51,6 +51,10 @@ object WhenHandler : Handler {
                 }
                 val route = portAndRoute.route
                 val resultCallback = object : HttpCallMapperUtil.ResultCallback {
+                    override fun getResultCallbackDescription(): HttpCallMapperUtil.ResultCallback.ResultCallbackDescription? {
+                        return HttpCallMapperUtil.ResultCallback.ResultCallbackDescription(retVal.getStatusCode(), "N/A")
+                    }
+
                     override fun getResult(request: Request, response: Response): String {
                         return WhenHandler.handleCall(request, response, retVal)
                     }
@@ -64,7 +68,7 @@ object WhenHandler : Handler {
     }
 
     private fun handleCall(request: Request, response: Response, retVal: DynamicRetVal): String {
-        response.status(retVal.getStatusCode(request))
+        response.status(retVal.getStatusCode())
         return retVal.getRetVal(request)
     }
 

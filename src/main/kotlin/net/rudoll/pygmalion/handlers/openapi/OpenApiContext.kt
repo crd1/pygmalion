@@ -51,6 +51,10 @@ class OpenApiContext(private val openAPI: OpenAPI) {
 
     private fun getResultCallback(operation: Operation): HttpCallMapperUtil.ResultCallback {
         return object : HttpCallMapperUtil.ResultCallback {
+            override fun getResultCallbackDescription(): HttpCallMapperUtil.ResultCallback.ResultCallbackDescription? {
+                return HttpCallMapperUtil.ResultCallback.ResultCallbackDescription(0, "", operation)
+            }
+
             override fun getResult(request: Request, response: Response): String {
                 return try {
                     val parameterValidationResult = RequestValidator(openAPI).validateRequest(request, operation)

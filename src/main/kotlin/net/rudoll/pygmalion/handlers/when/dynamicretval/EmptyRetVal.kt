@@ -7,7 +7,7 @@ class EmptyRetVal(private val statusCode: Int) : DynamicRetVal {
         return ""
     }
 
-    override fun getStatusCode(request: Request): Int {
+    override fun getStatusCode(): Int {
         return statusCode
     }
 }

@@ -6,6 +6,10 @@ import spark.Response
 import spark.Spark.halt
 
 class TokenEndpointCallback : HttpCallMapperUtil.ResultCallback {
+    override fun getResultCallbackDescription(): HttpCallMapperUtil.ResultCallback.ResultCallbackDescription? {
+        return null
+    }
+
     override fun getResult(request: Request, response: Response): String {
         if (!HttpCallMapperUtil.ensureAllQueryParamsPresent(request, listOf("redirect_uri", "client_id", "code", "grant_type"))) {
             return ""

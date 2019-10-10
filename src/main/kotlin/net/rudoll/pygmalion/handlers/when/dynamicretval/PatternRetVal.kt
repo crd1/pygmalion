@@ -9,7 +9,7 @@ class PatternRetVal(private val input: String, private val statusCode: Int) : Dy
         return dynamicRetValProcessor.process(input, request)
     }
 
-    override fun getStatusCode(request: Request): Int {
+    override fun getStatusCode(): Int {
         return statusCode
     }
 

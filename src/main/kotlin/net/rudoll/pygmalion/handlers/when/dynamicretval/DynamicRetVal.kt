@@ -6,5 +6,5 @@ interface DynamicRetVal {
 
     fun getRetVal(request: Request) : String
 
-    fun getStatusCode(request: Request) : Int = 200
+    fun getStatusCode() : Int = 200
 }

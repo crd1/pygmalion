@@ -49,6 +49,10 @@ class ResourceCreation(private val portAndRoute: PortUtil.PortAndRoute, private 
 
     private fun deleteCallback(resourceContainer: ResourceContainer): HttpCallMapperUtil.ResultCallback {
         return object : HttpCallMapperUtil.ResultCallback {
+            override fun getResultCallbackDescription(): HttpCallMapperUtil.ResultCallback.ResultCallbackDescription? {
+                return HttpCallMapperUtil.ResultCallback.ResultCallbackDescription(200, "Deletes resource")
+            }
+
             override fun getResult(request: Request, response: Response): String {
                 return resourceContainer.delete(request.params(":id"), response)
             }
@@ -57,6 +61,10 @@ class ResourceCreation(private val portAndRoute: PortUtil.PortAndRoute, private 
 
     private fun updateCallback(resourceContainer: ResourceContainer): HttpCallMapperUtil.ResultCallback {
         return object : HttpCallMapperUtil.ResultCallback {
+            override fun getResultCallbackDescription(): HttpCallMapperUtil.ResultCallback.ResultCallbackDescription? {
+                return HttpCallMapperUtil.ResultCallback.ResultCallbackDescription(200, "Updates the resource")
+            }
+
             override fun getResult(request: Request, response: Response): String {
                 return resourceContainer.set(request.params(":id"), request.body(), response)
             }
@@ -65,6 +73,10 @@ class ResourceCreation(private val portAndRoute: PortUtil.PortAndRoute, private 
 
     private fun createCallback(resourceContainer: ResourceContainer): HttpCallMapperUtil.ResultCallback {
         return object : HttpCallMapperUtil.ResultCallback {
+            override fun getResultCallbackDescription(): HttpCallMapperUtil.ResultCallback.ResultCallbackDescription? {
+                return HttpCallMapperUtil.ResultCallback.ResultCallbackDescription(201, "Creates new resource")
+            }
+
             override fun getResult(request: Request, response: Response): String {
                 return resourceContainer.new(request.body(), response)
             }
@@ -73,6 +85,10 @@ class ResourceCreation(private val portAndRoute: PortUtil.PortAndRoute, private 
 
     private fun getByIdCallback(resourceContainer: ResourceContainer): HttpCallMapperUtil.ResultCallback {
         return object : HttpCallMapperUtil.ResultCallback {
+            override fun getResultCallbackDescription(): HttpCallMapperUtil.ResultCallback.ResultCallbackDescription? {
+                return HttpCallMapperUtil.ResultCallback.ResultCallbackDescription(200, "Retrieves resource by id")
+            }
+
             override fun getResult(request: Request, response: Response): String {
                 return resourceContainer.get(request.params(":id"), response);
             }
@@ -81,6 +97,10 @@ class ResourceCreation(private val portAndRoute: PortUtil.PortAndRoute, private 
 
     private fun getAllCallback(resourceContainer: ResourceContainer): HttpCallMapperUtil.ResultCallback {
         return object : HttpCallMapperUtil.ResultCallback {
+            override fun getResultCallbackDescription(): HttpCallMapperUtil.ResultCallback.ResultCallbackDescription? {
+                return HttpCallMapperUtil.ResultCallback.ResultCallbackDescription(200, "Retrieves all resources")
+            }
+
             override fun getResult(request: Request, response: Response): String {
                 return resourceContainer.getAll()
             }

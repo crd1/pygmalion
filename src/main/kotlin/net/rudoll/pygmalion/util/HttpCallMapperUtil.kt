@@ -1,5 +1,6 @@
 package net.rudoll.pygmalion.util
 
+import io.swagger.v3.oas.models.Operation
 import net.rudoll.pygmalion.cli.Cli
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.AllowCorsArgument
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.ContentTypeArgument
@@ -39,7 +40,7 @@ object HttpCallMapperUtil {
                 return
             }
         }
-        OpenApiMonitor.add(method, route)
+        OpenApiMonitor.add(method, route, resultCallback)
     }
 
     private fun handleCall(request: Request, response: Response, parsedInput: ParsedInput, resultCallback: ResultCallback): String {
@@ -75,7 +76,10 @@ object HttpCallMapperUtil {
     }
 
     interface ResultCallback {
+        data class ResultCallbackDescription(val statusCode: Int, val description: String, val operation: Operation? = null)
+
         fun getResult(request: Request, response: Response): String
+        fun getResultCallbackDescription(): ResultCallbackDescription?
     }
 
     fun allowPreflightRequests(route: String) {

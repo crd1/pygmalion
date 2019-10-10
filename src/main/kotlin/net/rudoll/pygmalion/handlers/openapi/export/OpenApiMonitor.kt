@@ -7,31 +7,40 @@ import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.responses.ApiResponse
 import io.swagger.v3.oas.models.responses.ApiResponses
 import net.rudoll.pygmalion.model.StateHolder
+import net.rudoll.pygmalion.util.HttpCallMapperUtil
 
 object OpenApiMonitor {
 
-    fun add(method: String, route: String) {
+    fun add(method: String, route: String, resultCallback: HttpCallMapperUtil.ResultCallback) {
+        val resultCallbackDescription = resultCallback.getResultCallbackDescription() ?: return
         val paths = StateHolder.state.openAPISpec.paths
         if (paths == null || paths[route] == null) {
             StateHolder.state.openAPISpec.path(route, PathItem())
         }
-        addMethod(StateHolder.state.openAPISpec.paths[route]!!, method)
+        addMethod(StateHolder.state.openAPISpec.paths[route]!!, method, resultCallbackDescription)
     }
 
-    private fun addMethod(pathItem: PathItem, method: String) {
+    private fun addMethod(pathItem: PathItem, method: String, resultCallbackDescription: HttpCallMapperUtil.ResultCallback.ResultCallbackDescription) {
         when (method.toLowerCase()) {
-            "get" -> pathItem.get(getOperation())
-            "post" -> pathItem.post(getOperation())
-            "put" -> pathItem.put(getOperation())
-            "delete" -> pathItem.delete(getOperation())
-            "options" -> pathItem.options(getOperation())
+            "get" -> pathItem.get(getOperation(resultCallbackDescription))
+            "post" -> pathItem.post(getOperation(resultCallbackDescription))
+            "put" -> pathItem.put(getOperation(resultCallbackDescription))
+            "delete" -> pathItem.delete(getOperation(resultCallbackDescription))
+            "options" -> pathItem.options(getOperation(resultCallbackDescription))
         }
     }
 
-    private fun getOperation(): Operation {
+    private fun getOperation(resultCallbackDescription: HttpCallMapperUtil.ResultCallback.ResultCallbackDescription): Operation {
+        if (resultCallbackDescription.operation != null) {
+            return resultCallbackDescription.operation
+        }
         val operation = Operation()
-        operation.responses(ApiResponses().addApiResponse("200", ApiResponse().description("OK")))
+        operation.responses(getApiResponses(resultCallbackDescription))
         return operation
+    }
+
+    private fun getApiResponses(resultCallbackDescription: HttpCallMapperUtil.ResultCallback.ResultCallbackDescription): ApiResponses {
+        return ApiResponses().addApiResponse(resultCallbackDescription.statusCode.toString(), ApiResponse().description(resultCallbackDescription.description))
     }
 
     fun getPrototype(): OpenAPI {
