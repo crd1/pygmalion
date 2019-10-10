@@ -1,6 +1,7 @@
 package net.rudoll.pygmalion.handlers.openapi
 
 import net.rudoll.pygmalion.handlers.Handler
+import net.rudoll.pygmalion.handlers.openapi.export.OpenApiMonitor
 import net.rudoll.pygmalion.model.Input
 import net.rudoll.pygmalion.model.ParseStage
 import net.rudoll.pygmalion.model.ParsedInput
