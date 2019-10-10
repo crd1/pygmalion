@@ -21,12 +21,13 @@ object OpenApiMonitor {
     }
 
     private fun addMethod(pathItem: PathItem, method: String, resultCallbackDescription: HttpCallMapperUtil.ResultCallback.ResultCallbackDescription) {
+        val operation = getOperation(resultCallbackDescription)
         when (method.toLowerCase()) {
-            "get" -> pathItem.get(getOperation(resultCallbackDescription))
-            "post" -> pathItem.post(getOperation(resultCallbackDescription))
-            "put" -> pathItem.put(getOperation(resultCallbackDescription))
-            "delete" -> pathItem.delete(getOperation(resultCallbackDescription))
-            "options" -> pathItem.options(getOperation(resultCallbackDescription))
+            "get" -> pathItem.get(operation)
+            "post" -> pathItem.post(operation)
+            "put" -> pathItem.put(operation)
+            "delete" -> pathItem.delete(operation)
+            "options" -> pathItem.options(operation)
         }
     }
 
