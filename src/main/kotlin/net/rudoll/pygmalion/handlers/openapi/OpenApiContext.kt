@@ -84,6 +84,9 @@ class OpenApiContext(private val openAPI: OpenAPI) {
         if (mediaType.example != null) {
             return mediaType.example.toString()
         }
+        if (mediaType.examples != null && !mediaType.examples.isEmpty()) {
+            return mediaType.examples.values.first().value.toString()
+        }
         val jsonObject = ExampleResponseGenerator(openAPI).getFromSchema(mediaType.schema)
         return jsonObject.toString()
     }
