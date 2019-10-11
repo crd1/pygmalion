@@ -101,6 +101,11 @@ The following properties are injected by Pygmalion via bindings and can be acces
 ```
 Assuming you have a json or yaml specification in OpenAPI format, you can use pygmalion to spawn a test server. (This is still an incubating feature though.)
 
+Also it is possible to export your current Pygmalion request configuration to OpenAPI:
+```
+> openapi-export exportFile.yaml
+```
+
 ## OAuth support
 ```
 > oauth /oauth
