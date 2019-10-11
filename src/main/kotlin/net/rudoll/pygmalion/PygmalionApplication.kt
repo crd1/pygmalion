@@ -19,7 +19,7 @@ class PygmalionApplication {
 
         private fun handleInLocalClientMode(args: Array<String>) {
             if (args.isEmpty()) {
-                System.out.println("WebMock is already running. Cannot start in interactive mode.")
+                System.out.println("Pygmalion is already running. Cannot start in interactive mode.")
                 System.exit(1)
             } else {
                 LocalClient.send(args.joinToString(separator = " "))

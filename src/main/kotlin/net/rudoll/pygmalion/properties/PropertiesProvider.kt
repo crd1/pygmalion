@@ -9,7 +9,7 @@ object PropertiesProvider {
     private const val DEFAULT_SERVER_PORT = 4756
 
     init {
-        properties.load(PropertiesProvider::class.java.getResourceAsStream("/webmock.properties"))
+        properties.load(PropertiesProvider::class.java.getResourceAsStream("/pygmalion.properties"))
     }
 
     fun getVersion(): String {
