@@ -19,12 +19,4 @@ object PropertiesProvider {
             "N/A"
         }
     }
-
-    fun getServerPort(): Int {
-        return try {
-            properties.getProperty("server.port").toInt()
-        } catch (e: Exception) {
-            DEFAULT_SERVER_PORT
-        }
-    }
 }

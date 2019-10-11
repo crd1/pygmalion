@@ -1,8 +1,6 @@
 package net.rudoll.pygmalion
 
 import net.rudoll.pygmalion.cli.Cli.repl
-import net.rudoll.pygmalion.localsocket.LocalClient
-import net.rudoll.pygmalion.localsocket.LocalServer
 
 class PygmalionApplication {
 
@@ -10,22 +8,7 @@ class PygmalionApplication {
 
         @JvmStatic
         fun main(args: Array<String>) {
-            if (!LocalServer.startUp()) {
-                handleInLocalClientMode(args)
-            } else {
-                repl(args.joinToString(" "))
-            }
+            repl(args.joinToString(" "))
         }
-
-        private fun handleInLocalClientMode(args: Array<String>) {
-            if (args.isEmpty()) {
-                System.out.println("Pygmalion is already running. Cannot start in interactive mode.")
-                System.exit(1)
-            } else {
-                LocalClient.send(args.joinToString(separator = " "))
-                System.exit(0)
-            }
-        }
-
     }
 }
