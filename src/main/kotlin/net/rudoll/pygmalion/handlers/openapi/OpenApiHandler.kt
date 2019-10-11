@@ -18,10 +18,6 @@ object OpenApiHandler : Handler {
             parsedInput.errors.add("OpenApi specification file does not exist.")
             return
         }
-        if (!StateHolder.state.portSet) {
-            parsedInput.logs.add("Setting default port")
-            PortUtil.setPort(80)
-        }
         OpenApiParser.applyOpenApiSpec(openApiSpecFile, parsedInput)
     }
 

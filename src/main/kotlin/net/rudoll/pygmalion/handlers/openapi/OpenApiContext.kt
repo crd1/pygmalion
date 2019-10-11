@@ -3,15 +3,18 @@ package net.rudoll.pygmalion.handlers.openapi
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.Operation
 import io.swagger.v3.oas.models.PathItem
-import io.swagger.v3.oas.models.media.MediaType
 import io.swagger.v3.oas.models.media.Schema
 import io.swagger.v3.oas.models.responses.ApiResponses
+import io.swagger.v3.oas.models.servers.Server
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.ParsedArgument
 import net.rudoll.pygmalion.model.Action
 import net.rudoll.pygmalion.model.ParsedInput
+import net.rudoll.pygmalion.model.StateHolder
 import net.rudoll.pygmalion.util.HttpCallMapperUtil
+import net.rudoll.pygmalion.util.PortUtil
 import spark.Request
 import spark.Response
+import java.net.URL
 
 class OpenApiContext(private val openAPI: OpenAPI) {
 
@@ -19,7 +22,30 @@ class OpenApiContext(private val openAPI: OpenAPI) {
 
     fun apply(parsedInput: ParsedInput) {
         val paths = openAPI.paths
+        setPort(openAPI.servers, parsedInput)
         paths.forEach { path -> this.applyPath(path, parsedInput) }
+    }
+
+    private fun setPort(servers: MutableList<Server>?, parsedInput: ParsedInput) {
+        if (servers == null || servers.isEmpty()) {
+            if (!StateHolder.state.portSet) {
+                parsedInput.logs.add("Setting default port")
+                PortUtil.setPort(80)
+            }
+            return
+        }
+        var portSet = false
+        try {
+            val port = URL(servers.first().url).port
+            if (port != -1) {
+                portSet = PortUtil.setPort(port)
+            }
+        } catch (e: Exception) {
+            //ignore
+        }
+        if (!portSet) {
+            parsedInput.errors.add("Could not set port from OpenAPI specification.")
+        }
     }
 
     private fun applyPath(path: Map.Entry<String, PathItem>, parsedInput: ParsedInput) {
