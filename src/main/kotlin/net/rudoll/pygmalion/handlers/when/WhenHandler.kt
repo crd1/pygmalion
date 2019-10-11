@@ -52,7 +52,7 @@ object WhenHandler : Handler {
                 val route = portAndRoute.route
                 val resultCallback = object : HttpCallMapperUtil.ResultCallback {
                     override fun getResultCallbackDescription(): HttpCallMapperUtil.ResultCallback.ResultCallbackDescription? {
-                        return HttpCallMapperUtil.ResultCallback.ResultCallbackDescription(retVal.getStatusCode(), "N/A")
+                        return HttpCallMapperUtil.ResultCallback.ResultCallbackDescription(retVal.getStatusCode(), "N/A", exampleValue = retVal.getRetVal())
                     }
 
                     override fun getResult(request: Request, response: Response): String {

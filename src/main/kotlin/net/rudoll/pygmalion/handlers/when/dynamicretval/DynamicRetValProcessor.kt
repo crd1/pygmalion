@@ -27,12 +27,14 @@ class DynamicRetValProcessor {
             NashornExtension.extend(bindings)
             bindings["counter"] = retValCounter.call()
             bindings["timestamp"] = System.currentTimeMillis().toString()
-            bindings["body"] = request.body()
-            bindings["headers"] = gson.toJson(getHeaderMap(request))
-            bindings["queryParams"] = gson.toJson(getQueryParamMap(request))
-            bindings["cookies"] = gson.toJson(request.cookies())
-            bindings["uri"] = request.uri()
-            bindings["request"] = gson.toJson(request)
+            if (request != DynamicRetVal.DummyRequest) {
+                bindings["body"] = request.body()
+                bindings["headers"] = gson.toJson(getHeaderMap(request))
+                bindings["queryParams"] = gson.toJson(getQueryParamMap(request))
+                bindings["cookies"] = gson.toJson(request.cookies())
+                bindings["uri"] = request.uri()
+                bindings["request"] = gson.toJson(request)
+            }
 
             val matcher = EXPRESSION_PATTERN.matcher(pattern)
             val processed = StringBuffer()

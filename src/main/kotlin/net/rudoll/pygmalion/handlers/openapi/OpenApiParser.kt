@@ -11,7 +11,9 @@ object OpenApiParser {
         val openAPI = OpenAPIV3Parser().read(file.absolutePath)
         val openApiContext = OpenApiContext(openAPI)
         openApiContext.apply(parsedInput)
-        OpenApiMonitor.addComponents(openAPI.components)
+        if (openAPI.components != null) {
+            OpenApiMonitor.addComponents(openAPI.components)
+        }
     }
 
 }

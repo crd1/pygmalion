@@ -76,7 +76,7 @@ object HttpCallMapperUtil {
     }
 
     interface ResultCallback {
-        data class ResultCallbackDescription(val statusCode: Int, val description: String, val operation: Operation? = null)
+        data class ResultCallbackDescription(val statusCode: Int, val description: String, val operation: Operation? = null, val contentType: String = "application/json", val exampleValue: String = "")
 
         fun getResult(request: Request, response: Response): String
         fun getResultCallbackDescription(): ResultCallbackDescription?
