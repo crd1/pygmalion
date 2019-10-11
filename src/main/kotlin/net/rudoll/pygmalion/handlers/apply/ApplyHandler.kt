@@ -11,7 +11,13 @@ import java.io.File
 
 object ApplyHandler : Handler {
     override fun handle(input: Input, parsedInput: ParsedInput) {
-        val file = File(input.second())
+        input.consume(1)
+        if (!input.hasNext()) {
+            parsedInput.errors.add("No config file specified.")
+            return
+        }
+        val file = File(input.first())
+        input.consume(1)
         parsedInput.actions.add(object : Action {
             override fun run(arguments: Set<ParsedArgument>) {
                 Cli.print("", Cli.PrintPromptBehaviour.WITH_PROMPT)
@@ -22,7 +28,6 @@ object ApplyHandler : Handler {
                 Cli.removePrompt()
             }
         })
-        input.consume(2)
     }
 
     override fun canHandle(input: Input): Boolean {
