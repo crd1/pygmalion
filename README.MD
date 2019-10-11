@@ -93,6 +93,7 @@ The following properties are injected by Pygmalion via bindings and can be acces
 |queryParams|JSON string representing all queryParams|
 |cookies|JSON string representing all cookies sent with the request|
 |uri|The request's URI|
+|request|Representation of the whole request|
 
 ## OpenAPI support
 ```
