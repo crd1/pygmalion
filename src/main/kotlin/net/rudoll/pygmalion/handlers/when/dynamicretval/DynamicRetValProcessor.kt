@@ -1,7 +1,9 @@
 package net.rudoll.pygmalion.handlers.`when`.dynamicretval
 
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import net.rudoll.pygmalion.util.NashornExtension
+import net.rudoll.pygmalion.util.SerializePublicMethodsTypeAdapter
 import spark.Request
 import java.util.regex.Pattern
 import javax.script.ScriptContext
@@ -11,7 +13,13 @@ class DynamicRetValProcessor {
     private val EXPRESSION_REGEX = "\\\$\\{(.+)\\}"
     private val EXPRESSION_PATTERN = Pattern.compile(EXPRESSION_REGEX)
     private val retValCounter = RetValCounter()
-    private val gson = Gson()
+    private val gson = getGson()
+
+    private fun getGson(): Gson {
+        val gsonBuilder = GsonBuilder()
+        gsonBuilder.registerTypeAdapter(Request::class.java, SerializePublicMethodsTypeAdapter(gsonBuilder = gsonBuilder, methodsToExclude = setOf("session", "raw")))
+        return gsonBuilder.create()
+    }
 
     fun process(pattern: String, request: Request): String {
         return try {
@@ -24,6 +32,7 @@ class DynamicRetValProcessor {
             bindings["queryParams"] = gson.toJson(getQueryParamMap(request))
             bindings["cookies"] = gson.toJson(request.cookies())
             bindings["uri"] = request.uri()
+            bindings["request"] = gson.toJson(request)
 
             val matcher = EXPRESSION_PATTERN.matcher(pattern)
             val processed = StringBuffer()
