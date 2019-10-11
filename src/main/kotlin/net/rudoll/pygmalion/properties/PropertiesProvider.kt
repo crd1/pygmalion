@@ -6,8 +6,6 @@ object PropertiesProvider {
 
     private var properties: Properties = Properties()
 
-    private const val DEFAULT_SERVER_PORT = 4756
-
     init {
         properties.load(PropertiesProvider::class.java.getResourceAsStream("/pygmalion.properties"))
     }
