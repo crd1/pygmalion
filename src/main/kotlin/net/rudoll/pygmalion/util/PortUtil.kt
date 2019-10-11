@@ -1,5 +1,6 @@
 package net.rudoll.pygmalion.util
 
+import net.rudoll.pygmalion.handlers.openapi.export.OpenApiMonitor
 import net.rudoll.pygmalion.model.StateHolder
 import spark.Spark
 
@@ -17,6 +18,7 @@ object PortUtil {
         }
         Spark.port(port)
         StateHolder.state.portSet = true
+        OpenApiMonitor.setPort(port)
         return true
     }
 

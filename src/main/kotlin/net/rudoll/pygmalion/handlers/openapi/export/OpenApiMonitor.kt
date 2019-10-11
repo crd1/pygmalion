@@ -11,6 +11,7 @@ import io.swagger.v3.oas.models.media.Content
 import io.swagger.v3.oas.models.media.MediaType
 import io.swagger.v3.oas.models.responses.ApiResponse
 import io.swagger.v3.oas.models.responses.ApiResponses
+import io.swagger.v3.oas.models.servers.Server
 import net.rudoll.pygmalion.model.StateHolder
 import net.rudoll.pygmalion.util.HttpCallMapperUtil
 
@@ -85,5 +86,11 @@ object OpenApiMonitor {
             StateHolder.state.openAPISpec.components = Components()
         }
         components.schemas.forEach { StateHolder.state.openAPISpec.components.addSchemas(it.key, it.value) }
+    }
+
+    fun setPort(port: Int) {
+        val server = Server()
+        server.url = "http://localhost:$port"
+        StateHolder.state.openAPISpec.addServersItem(server)
     }
 }
