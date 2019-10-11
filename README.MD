@@ -87,13 +87,14 @@ The following properties are injected by Pygmalion via bindings and can be acces
 |Property|Description|
 |---|---|
 |body|Request body|
+|cookies|JSON string representing all cookies sent with the request|
 |counter|How many times this endpoint has been called|
-|timestamp|Current timestamp (ms since the epoch)|
 |headers|JSON string representing all request headers|
 |queryParams|JSON string representing all queryParams|
-|cookies|JSON string representing all cookies sent with the request|
+|request|JSON string representing the whole request|
+|timestamp|Current timestamp (ms since the epoch)|
 |uri|The request's URI|
-|request|Representation of the whole request|
+
 
 ## OpenAPI support
 ```
