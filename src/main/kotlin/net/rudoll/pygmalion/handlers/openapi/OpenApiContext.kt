@@ -28,10 +28,6 @@ class OpenApiContext(private val openAPI: OpenAPI) {
 
     private fun setPort(servers: MutableList<Server>?, parsedInput: ParsedInput) {
         if (servers == null || servers.isEmpty()) {
-            if (!StateHolder.state.portSet) {
-                parsedInput.logs.add("Setting default port")
-                PortUtil.setPort(80)
-            }
             return
         }
         var portSet = false
