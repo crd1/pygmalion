@@ -1,10 +1,8 @@
 package net.rudoll.pygmalion.handlers.chaosmonkey
 
 import net.rudoll.pygmalion.handlers.Handler
-import net.rudoll.pygmalion.model.Input
-import net.rudoll.pygmalion.model.ParseStage
-import net.rudoll.pygmalion.model.ParsedInput
-import net.rudoll.pygmalion.model.StateHolder
+import net.rudoll.pygmalion.handlers.arguments.parsedarguments.ParsedArgument
+import net.rudoll.pygmalion.model.*
 
 object ChaosMonkeyHandler : Handler {
 
@@ -19,7 +17,11 @@ object ChaosMonkeyHandler : Handler {
             parsedInput.errors.add("Probability is no valid percentage")
             return
         }
-        StateHolder.state.chaosMonkeyProbability = probability
+        parsedInput.actions.add(object : Action {
+            override fun run(arguments: Set<ParsedArgument>) {
+                StateHolder.state.chaosMonkeyProbability = probability
+            }
+        })
     }
 
     override fun canHandle(input: Input): Boolean {
