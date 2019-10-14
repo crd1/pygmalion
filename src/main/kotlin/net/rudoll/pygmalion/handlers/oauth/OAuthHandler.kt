@@ -1,6 +1,8 @@
 package net.rudoll.pygmalion.handlers.oauth
 
 import net.rudoll.pygmalion.handlers.Handler
+import net.rudoll.pygmalion.handlers.arguments.parsedarguments.ParsedArgument
+import net.rudoll.pygmalion.model.Action
 import net.rudoll.pygmalion.model.Input
 import net.rudoll.pygmalion.model.ParseStage
 import net.rudoll.pygmalion.model.ParsedInput
@@ -13,8 +15,12 @@ object OAuthHandler : Handler {
             return
         }
         val basePath = input.first()
-        OAuthRouteMapper.createOAuthRoutes(basePath, parsedInput)
         input.consume(1)
+        parsedInput.actions.add(object : Action {
+            override fun run(arguments: Set<ParsedArgument>) {
+                OAuthRouteMapper.createOAuthRoutes(basePath, parsedInput)
+            }
+        })
     }
 
     override fun canHandle(input: Input): Boolean {
