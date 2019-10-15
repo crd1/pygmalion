@@ -34,8 +34,24 @@ object WebsocketHandler : Handler {
         when (input.first()) {
             "message" -> handleWebsocketMessageCommand(path, input, parsedInput)
             "recurring" -> handleRecurringWebsocketMessageCommand(path, input, parsedInput)
+            "respond" -> handleWebsocketResponseCommand(path, input, parsedInput)
             else -> return
         }
+    }
+
+    private fun handleWebsocketResponseCommand(path: String, input: Input, parsedInput: ParsedInput) {
+        input.consume(1)
+        if (!input.hasNext()) {
+            parsedInput.errors.add("No response specified.")
+            return
+        }
+        val responsePattern = input.first()
+        input.consume(1)
+        parsedInput.actions.add(object : Action {
+            override fun run(arguments: Set<ParsedArgument>) {
+                StateHolder.state.websocketResources[path]!!.createPatternResponder(responsePattern)
+            }
+        })
     }
 
     private fun handleRecurringWebsocketMessageCommand(path: String, input: Input, parsedInput: ParsedInput) {

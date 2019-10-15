@@ -12,6 +12,7 @@ class WebsocketResource(private val path: String, private val shouldLog: Boolean
 
     private val sessions = mutableListOf<Session>()
     private val dynamicRetValProcessor = DynamicRetValProcessor()
+    private var responder: WebsocketResponder = object : WebsocketResponder {}
 
     @OnWebSocketError
     fun onWebSocketError(cause: Throwable) {
@@ -33,6 +34,9 @@ class WebsocketResource(private val path: String, private val shouldLog: Boolean
     @OnWebSocketMessage
     fun onWebSocketText(session: Session, message: String) {
         log("Websocket message to $path reveived: $message")
+        this.responder.getResponse(message)?.let {
+            session.remote.sendString(it)
+        }
     }
 
     fun broadcast(message: String) {
@@ -54,5 +58,9 @@ class WebsocketResource(private val path: String, private val shouldLog: Boolean
         if (shouldLog) {
             Cli.log(message)
         }
+    }
+
+    fun createPatternResponder(responsePattern: String) {
+        this.responder = WebsocketDynamicRetvalResponder(responsePattern, this.dynamicRetValProcessor)
     }
 }
