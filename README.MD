@@ -112,9 +112,9 @@ After setting up the endpoints messages can be sent to the websocket's clients:
 ```
 It is also possible to schedule recurring websocket messages like this:
 ```
-> websocket /test recurring PING 5000
+> websocket /test recurring 'PING' 5000
 ```
-This will send the message PING to all clients connected to the `/test` websocket every 5 seconds.
+This will send the message 'PING' to all clients connected to the `/test` websocket every 5 seconds.
 
 Also, it is possible to configure a response to incoming messages:
 ```
