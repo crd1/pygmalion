@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import net.rudoll.pygmalion.handlers.`when`.dynamicretval.DynamicRetVal
 import net.rudoll.pygmalion.handlers.`when`.dynamicretval.RetValCounter
+import net.rudoll.pygmalion.handlers.websocket.WebsocketResponder
 import spark.Request
 import java.util.regex.Pattern
 import javax.script.ScriptContext
@@ -27,7 +28,9 @@ class DynamicRetValProcessor {
             NashornExtension.extend(bindings)
             bindings["counter"] = retValCounter.call()
             bindings["timestamp"] = System.currentTimeMillis().toString()
-            if (request != DynamicRetVal.DummyRequest) {
+            if (request is WebsocketResponder.WebsocketRequest) {
+                bindings["message"] = request.message
+            } else if (request != DynamicRetVal.DummyRequest) {
                 bindings["body"] = request.body()
                 bindings["headers"] = gson.toJson(getHeaderMap(request))
                 bindings["queryParams"] = gson.toJson(getQueryParamMap(request))
