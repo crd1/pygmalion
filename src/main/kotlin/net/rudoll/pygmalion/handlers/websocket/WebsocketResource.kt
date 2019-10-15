@@ -4,6 +4,7 @@ import net.rudoll.pygmalion.cli.Cli
 import net.rudoll.pygmalion.common.DynamicRetValProcessor
 import net.rudoll.pygmalion.handlers.`when`.dynamicretval.DynamicRetVal
 import org.eclipse.jetty.websocket.api.Session
+import org.eclipse.jetty.websocket.api.WebSocketException
 import org.eclipse.jetty.websocket.api.WebSocketListener
 
 class WebsocketResource(private val path: String, private val shouldLog: Boolean) : WebSocketListener {
@@ -33,16 +34,23 @@ class WebsocketResource(private val path: String, private val shouldLog: Boolean
     }
 
     fun broadcast(message: String) {
-        sessions.filter { it.isOpen }.forEach { it.remote.sendString(processMessage(message)) }
+        log("Broadcasting websocket message to $path")
+        sessions.filter { it.isOpen }.forEach {
+            try {
+                it.remote.sendString(processMessage(message))
+            } catch (e: WebSocketException) {
+                log("An error occured while broadcasting websocket message to $path: ${e.message}.")
+            }
+        }
     }
 
     private fun processMessage(message: String): String {
         return this.dynamicRetValProcessor.process(message, DynamicRetVal.DummyRequest)
     }
 
-    private fun log(message: String?) {
+    private fun log(message: String) {
         if (shouldLog) {
-            Cli.log("$message")
+            Cli.log(message)
         }
     }
 }

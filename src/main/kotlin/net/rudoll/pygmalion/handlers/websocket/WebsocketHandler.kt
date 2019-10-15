@@ -7,6 +7,7 @@ import net.rudoll.pygmalion.model.*
 import net.rudoll.pygmalion.common.PortManager
 import spark.Spark.init
 import spark.Spark.webSocket
+import java.util.*
 
 object WebsocketHandler : Handler {
     override fun handle(input: Input, parsedInput: ParsedInput) {
@@ -32,8 +33,42 @@ object WebsocketHandler : Handler {
         }
         when (input.first()) {
             "message" -> handleWebsocketMessageCommand(path, input, parsedInput)
+            "recurring" -> handleRecurringWebsocketMessageCommand(path, input, parsedInput)
             else -> return
         }
+    }
+
+    private fun handleRecurringWebsocketMessageCommand(path: String, input: Input, parsedInput: ParsedInput) {
+        input.consume(1)
+        if (!input.hasNext()) {
+            parsedInput.errors.add("No message specified.")
+            return
+        }
+        val message = input.first()
+        input.consume(1)
+        if (!input.hasNext()) {
+            parsedInput.errors.add("No interval specified.")
+            return
+        }
+        val interval = input.first().toLongOrNull()
+        input.consume(1)
+        if (interval == null) {
+            parsedInput.errors.add("Interval is not numeric.")
+            return
+        }
+        parsedInput.actions.add(object : Action {
+            override fun run(arguments: Set<ParsedArgument>) {
+                parsedInput.logs.add("Scheduling recurring message to $path every $interval ms.")
+                val websocketResource = StateHolder.state.websocketResources[path]!!
+                val timerTask = object : TimerTask() {
+                    override fun run() {
+                        websocketResource.broadcast(message)
+                    }
+                }
+                Timer().scheduleAtFixedRate(timerTask, interval, interval)
+                StateHolder.state.timerTasks.add(timerTask)
+            }
+        })
     }
 
     private fun handleWebsocketMessageCommand(path: String, input: Input, parsedInput: ParsedInput) {
