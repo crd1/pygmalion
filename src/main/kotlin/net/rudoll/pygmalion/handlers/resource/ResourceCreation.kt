@@ -5,7 +5,7 @@ import net.rudoll.pygmalion.handlers.arguments.parsedarguments.KeyArgument
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.ParsedArgument
 import net.rudoll.pygmalion.model.Action
 import net.rudoll.pygmalion.model.ParsedInput
-import net.rudoll.pygmalion.common.HttpCallMapperUtil
+import net.rudoll.pygmalion.common.HttpCallMapper
 import net.rudoll.pygmalion.common.PortUtil
 import spark.Request
 import spark.Response
@@ -29,14 +29,14 @@ class ResourceCreation(private val portAndRoute: PortUtil.PortAndRoute, private 
         }
         val route = portAndRoute.route
         parsedInput.logs.add("Creating resource mapping for $route:${portAndRoute.port ?: "80"}")
-        HttpCallMapperUtil.map("get", route, parsedInput, getAllCallback(resourceContainer))
-        HttpCallMapperUtil.map("get", "$route/:id", parsedInput, getByIdCallback(resourceContainer))
-        HttpCallMapperUtil.map("post", route, parsedInput, createCallback(resourceContainer))
-        HttpCallMapperUtil.map("put", "$route/:id", parsedInput, updateCallback(resourceContainer))
-        HttpCallMapperUtil.map("delete", "$route/:id", parsedInput, deleteCallback(resourceContainer))
+        HttpCallMapper.map("get", route, parsedInput, getAllCallback(resourceContainer))
+        HttpCallMapper.map("get", "$route/:id", parsedInput, getByIdCallback(resourceContainer))
+        HttpCallMapper.map("post", route, parsedInput, createCallback(resourceContainer))
+        HttpCallMapper.map("put", "$route/:id", parsedInput, updateCallback(resourceContainer))
+        HttpCallMapper.map("delete", "$route/:id", parsedInput, deleteCallback(resourceContainer))
         if (parsedInput.arguments.contains(AllowCorsArgument)) {
-            HttpCallMapperUtil.allowPreflightRequests(route)
-            HttpCallMapperUtil.allowPreflightRequests("$route/:id")
+            HttpCallMapper.allowPreflightRequests(route)
+            HttpCallMapper.allowPreflightRequests("$route/:id")
         }
     }
 
@@ -47,10 +47,10 @@ class ResourceCreation(private val portAndRoute: PortUtil.PortAndRoute, private 
         return keyProperty
     }
 
-    private fun deleteCallback(resourceContainer: ResourceContainer): HttpCallMapperUtil.ResultCallback {
-        return object : HttpCallMapperUtil.ResultCallback {
-            override fun getResultCallbackDescription(): HttpCallMapperUtil.ResultCallback.ResultCallbackDescription? {
-                return HttpCallMapperUtil.ResultCallback.ResultCallbackDescription(200, "Deletes resource")
+    private fun deleteCallback(resourceContainer: ResourceContainer): HttpCallMapper.ResultCallback {
+        return object : HttpCallMapper.ResultCallback {
+            override fun getResultCallbackDescription(): HttpCallMapper.ResultCallback.ResultCallbackDescription? {
+                return HttpCallMapper.ResultCallback.ResultCallbackDescription(200, "Deletes resource")
             }
 
             override fun getResult(request: Request, response: Response): String {
@@ -59,10 +59,10 @@ class ResourceCreation(private val portAndRoute: PortUtil.PortAndRoute, private 
         }
     }
 
-    private fun updateCallback(resourceContainer: ResourceContainer): HttpCallMapperUtil.ResultCallback {
-        return object : HttpCallMapperUtil.ResultCallback {
-            override fun getResultCallbackDescription(): HttpCallMapperUtil.ResultCallback.ResultCallbackDescription? {
-                return HttpCallMapperUtil.ResultCallback.ResultCallbackDescription(200, "Updates the resource")
+    private fun updateCallback(resourceContainer: ResourceContainer): HttpCallMapper.ResultCallback {
+        return object : HttpCallMapper.ResultCallback {
+            override fun getResultCallbackDescription(): HttpCallMapper.ResultCallback.ResultCallbackDescription? {
+                return HttpCallMapper.ResultCallback.ResultCallbackDescription(200, "Updates the resource")
             }
 
             override fun getResult(request: Request, response: Response): String {
@@ -71,10 +71,10 @@ class ResourceCreation(private val portAndRoute: PortUtil.PortAndRoute, private 
         }
     }
 
-    private fun createCallback(resourceContainer: ResourceContainer): HttpCallMapperUtil.ResultCallback {
-        return object : HttpCallMapperUtil.ResultCallback {
-            override fun getResultCallbackDescription(): HttpCallMapperUtil.ResultCallback.ResultCallbackDescription? {
-                return HttpCallMapperUtil.ResultCallback.ResultCallbackDescription(201, "Creates new resource")
+    private fun createCallback(resourceContainer: ResourceContainer): HttpCallMapper.ResultCallback {
+        return object : HttpCallMapper.ResultCallback {
+            override fun getResultCallbackDescription(): HttpCallMapper.ResultCallback.ResultCallbackDescription? {
+                return HttpCallMapper.ResultCallback.ResultCallbackDescription(201, "Creates new resource")
             }
 
             override fun getResult(request: Request, response: Response): String {
@@ -83,10 +83,10 @@ class ResourceCreation(private val portAndRoute: PortUtil.PortAndRoute, private 
         }
     }
 
-    private fun getByIdCallback(resourceContainer: ResourceContainer): HttpCallMapperUtil.ResultCallback {
-        return object : HttpCallMapperUtil.ResultCallback {
-            override fun getResultCallbackDescription(): HttpCallMapperUtil.ResultCallback.ResultCallbackDescription? {
-                return HttpCallMapperUtil.ResultCallback.ResultCallbackDescription(200, "Retrieves resource by id")
+    private fun getByIdCallback(resourceContainer: ResourceContainer): HttpCallMapper.ResultCallback {
+        return object : HttpCallMapper.ResultCallback {
+            override fun getResultCallbackDescription(): HttpCallMapper.ResultCallback.ResultCallbackDescription? {
+                return HttpCallMapper.ResultCallback.ResultCallbackDescription(200, "Retrieves resource by id")
             }
 
             override fun getResult(request: Request, response: Response): String {
@@ -95,10 +95,10 @@ class ResourceCreation(private val portAndRoute: PortUtil.PortAndRoute, private 
         }
     }
 
-    private fun getAllCallback(resourceContainer: ResourceContainer): HttpCallMapperUtil.ResultCallback {
-        return object : HttpCallMapperUtil.ResultCallback {
-            override fun getResultCallbackDescription(): HttpCallMapperUtil.ResultCallback.ResultCallbackDescription? {
-                return HttpCallMapperUtil.ResultCallback.ResultCallbackDescription(200, "Retrieves all resources")
+    private fun getAllCallback(resourceContainer: ResourceContainer): HttpCallMapper.ResultCallback {
+        return object : HttpCallMapper.ResultCallback {
+            override fun getResultCallbackDescription(): HttpCallMapper.ResultCallback.ResultCallbackDescription? {
+                return HttpCallMapper.ResultCallback.ResultCallbackDescription(200, "Retrieves all resources")
             }
 
             override fun getResult(request: Request, response: Response): String {

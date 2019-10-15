@@ -14,7 +14,7 @@ import spark.Response
 import spark.Spark
 import spark.Spark.halt
 
-object HttpCallMapperUtil {
+object HttpCallMapper {
 
     private val ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin"
     private val ACCESS_CONTROL_ALLOW_HEADERS = "Access-Control-Allow-Headers"

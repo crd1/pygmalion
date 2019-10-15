@@ -1,13 +1,13 @@
 package net.rudoll.pygmalion.handlers.oauth
 
-import net.rudoll.pygmalion.common.HttpCallMapperUtil
-import net.rudoll.pygmalion.common.HttpCallMapperUtil.ensureAllQueryParamsPresent
+import net.rudoll.pygmalion.common.HttpCallMapper
+import net.rudoll.pygmalion.common.HttpCallMapper.ensureAllQueryParamsPresent
 import spark.Request
 import spark.Response
 import spark.Spark.halt
 
-class AuthorizeEndpointCallback : HttpCallMapperUtil.ResultCallback {
-    override fun getResultCallbackDescription(): HttpCallMapperUtil.ResultCallback.ResultCallbackDescription? {
+class AuthorizeEndpointCallback : HttpCallMapper.ResultCallback {
+    override fun getResultCallbackDescription(): HttpCallMapper.ResultCallback.ResultCallbackDescription? {
         return null
     }
 

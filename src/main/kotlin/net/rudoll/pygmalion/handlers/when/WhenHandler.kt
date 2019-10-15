@@ -8,7 +8,7 @@ import net.rudoll.pygmalion.model.Action
 import net.rudoll.pygmalion.model.Input
 import net.rudoll.pygmalion.model.ParseStage
 import net.rudoll.pygmalion.model.ParsedInput
-import net.rudoll.pygmalion.common.HttpCallMapperUtil
+import net.rudoll.pygmalion.common.HttpCallMapper
 import net.rudoll.pygmalion.common.PortUtil
 import spark.Request
 import spark.Response
@@ -50,18 +50,18 @@ object WhenHandler : Handler {
                     return
                 }
                 val route = portAndRoute.route
-                val resultCallback = object : HttpCallMapperUtil.ResultCallback {
-                    override fun getResultCallbackDescription(): HttpCallMapperUtil.ResultCallback.ResultCallbackDescription? {
-                        return HttpCallMapperUtil.ResultCallback.ResultCallbackDescription(retVal.getStatusCode(), "N/A", exampleValue = retVal.getRetVal())
+                val resultCallback = object : HttpCallMapper.ResultCallback {
+                    override fun getResultCallbackDescription(): HttpCallMapper.ResultCallback.ResultCallbackDescription? {
+                        return HttpCallMapper.ResultCallback.ResultCallbackDescription(retVal.getStatusCode(), "N/A", exampleValue = retVal.getRetVal())
                     }
 
                     override fun getResult(request: Request, response: Response): String {
                         return WhenHandler.handleCall(request, response, retVal)
                     }
                 }
-                HttpCallMapperUtil.map(method, route, parsedInput, resultCallback)
+                HttpCallMapper.map(method, route, parsedInput, resultCallback)
                 if (parsedInput.arguments.contains(AllowCorsArgument)) {
-                    HttpCallMapperUtil.allowPreflightRequests(route)
+                    HttpCallMapper.allowPreflightRequests(route)
                 }
             }
         })

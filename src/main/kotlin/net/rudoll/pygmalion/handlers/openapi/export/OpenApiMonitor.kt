@@ -13,13 +13,13 @@ import io.swagger.v3.oas.models.responses.ApiResponse
 import io.swagger.v3.oas.models.responses.ApiResponses
 import io.swagger.v3.oas.models.servers.Server
 import net.rudoll.pygmalion.model.StateHolder
-import net.rudoll.pygmalion.common.HttpCallMapperUtil
+import net.rudoll.pygmalion.common.HttpCallMapper
 
 object OpenApiMonitor {
 
     private val om = ObjectMapper()
 
-    fun add(method: String, route: String, resultCallback: HttpCallMapperUtil.ResultCallback) {
+    fun add(method: String, route: String, resultCallback: HttpCallMapper.ResultCallback) {
         val resultCallbackDescription = resultCallback.getResultCallbackDescription() ?: return
         val paths = StateHolder.state.openAPISpec.paths
         if (paths == null || paths[route] == null) {
@@ -28,7 +28,7 @@ object OpenApiMonitor {
         addMethod(StateHolder.state.openAPISpec.paths[route]!!, method, resultCallbackDescription)
     }
 
-    private fun addMethod(pathItem: PathItem, method: String, resultCallbackDescription: HttpCallMapperUtil.ResultCallback.ResultCallbackDescription) {
+    private fun addMethod(pathItem: PathItem, method: String, resultCallbackDescription: HttpCallMapper.ResultCallback.ResultCallbackDescription) {
         val operation = getOperation(resultCallbackDescription)
         when (method.toLowerCase()) {
             "get" -> pathItem.get(operation)
@@ -39,7 +39,7 @@ object OpenApiMonitor {
         }
     }
 
-    private fun getOperation(resultCallbackDescription: HttpCallMapperUtil.ResultCallback.ResultCallbackDescription): Operation {
+    private fun getOperation(resultCallbackDescription: HttpCallMapper.ResultCallback.ResultCallbackDescription): Operation {
         if (resultCallbackDescription.operation != null) {
             return resultCallbackDescription.operation
         }
@@ -48,7 +48,7 @@ object OpenApiMonitor {
         return operation
     }
 
-    private fun addApiResponses(operation: Operation, resultCallbackDescription: HttpCallMapperUtil.ResultCallback.ResultCallbackDescription) {
+    private fun addApiResponses(operation: Operation, resultCallbackDescription: HttpCallMapper.ResultCallback.ResultCallbackDescription) {
         val mediaType = MediaType().addExamples("example1", getExample(resultCallbackDescription.exampleValue))
         val content = Content().addMediaType(resultCallbackDescription.contentType, mediaType)
         val apiResponses = ApiResponses().addApiResponse(resultCallbackDescription.statusCode.toString(), ApiResponse().description(resultCallbackDescription.description).content(content))

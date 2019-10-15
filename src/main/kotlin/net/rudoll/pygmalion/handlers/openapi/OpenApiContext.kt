@@ -9,7 +9,7 @@ import io.swagger.v3.oas.models.servers.Server
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.ParsedArgument
 import net.rudoll.pygmalion.model.Action
 import net.rudoll.pygmalion.model.ParsedInput
-import net.rudoll.pygmalion.common.HttpCallMapperUtil
+import net.rudoll.pygmalion.common.HttpCallMapper
 import net.rudoll.pygmalion.common.PortUtil
 import spark.Request
 import spark.Response
@@ -58,7 +58,7 @@ class OpenApiContext(private val openAPI: OpenAPI) {
                 override fun run(arguments: Set<ParsedArgument>) {
                     val pathWithArguments = getPathWithArguments(path)
                     parsedInput.logs.add("Mapping OpenAPI route $pathWithArguments with method $method")
-                    HttpCallMapperUtil.map(method, pathWithArguments, parsedInput, resultCallback)
+                    HttpCallMapper.map(method, pathWithArguments, parsedInput, resultCallback)
                 }
             })
         }
@@ -70,10 +70,10 @@ class OpenApiContext(private val openAPI: OpenAPI) {
         return result
     }
 
-    private fun getResultCallback(operation: Operation): HttpCallMapperUtil.ResultCallback {
-        return object : HttpCallMapperUtil.ResultCallback {
-            override fun getResultCallbackDescription(): HttpCallMapperUtil.ResultCallback.ResultCallbackDescription? {
-                return HttpCallMapperUtil.ResultCallback.ResultCallbackDescription(0, "", operation)
+    private fun getResultCallback(operation: Operation): HttpCallMapper.ResultCallback {
+        return object : HttpCallMapper.ResultCallback {
+            override fun getResultCallbackDescription(): HttpCallMapper.ResultCallback.ResultCallbackDescription? {
+                return HttpCallMapper.ResultCallback.ResultCallbackDescription(0, "", operation)
             }
 
             override fun getResult(request: Request, response: Response): String {

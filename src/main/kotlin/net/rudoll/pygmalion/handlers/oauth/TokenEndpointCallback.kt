@@ -1,17 +1,17 @@
 package net.rudoll.pygmalion.handlers.oauth
 
-import net.rudoll.pygmalion.common.HttpCallMapperUtil
+import net.rudoll.pygmalion.common.HttpCallMapper
 import spark.Request
 import spark.Response
 import spark.Spark.halt
 
-class TokenEndpointCallback : HttpCallMapperUtil.ResultCallback {
-    override fun getResultCallbackDescription(): HttpCallMapperUtil.ResultCallback.ResultCallbackDescription? {
+class TokenEndpointCallback : HttpCallMapper.ResultCallback {
+    override fun getResultCallbackDescription(): HttpCallMapper.ResultCallback.ResultCallbackDescription? {
         return null
     }
 
     override fun getResult(request: Request, response: Response): String {
-        if (!HttpCallMapperUtil.ensureAllQueryParamsPresent(request, listOf("redirect_uri", "client_id", "code", "grant_type"))) {
+        if (!HttpCallMapper.ensureAllQueryParamsPresent(request, listOf("redirect_uri", "client_id", "code", "grant_type"))) {
             return ""
         }
         val grantType = request.queryParams("grant_type")
