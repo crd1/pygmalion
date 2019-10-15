@@ -4,7 +4,7 @@ import net.rudoll.pygmalion.handlers.Handler
 import net.rudoll.pygmalion.model.Input
 import net.rudoll.pygmalion.model.ParseStage
 import net.rudoll.pygmalion.model.ParsedInput
-import net.rudoll.pygmalion.common.PortUtil
+import net.rudoll.pygmalion.common.PortManager
 
 object ResourceHandler : Handler {
     override fun getParseStage(): ParseStage {
@@ -17,7 +17,7 @@ object ResourceHandler : Handler {
 
     override fun handle(input: Input, parsedInput: ParsedInput) {
         val target = input.second()
-        val portAndRoute = PortUtil.getPortAndRoute(target)
+        val portAndRoute = PortManager.getPortAndRoute(target)
         input.consume(2)
         var initialRepoFile: String? = null
         if (input.hasNext() && input.first() == "from") {

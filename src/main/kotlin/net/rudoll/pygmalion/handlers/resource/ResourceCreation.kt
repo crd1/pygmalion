@@ -6,15 +6,15 @@ import net.rudoll.pygmalion.handlers.arguments.parsedarguments.ParsedArgument
 import net.rudoll.pygmalion.model.Action
 import net.rudoll.pygmalion.model.ParsedInput
 import net.rudoll.pygmalion.common.HttpCallMapper
-import net.rudoll.pygmalion.common.PortUtil
+import net.rudoll.pygmalion.common.PortManager
 import spark.Request
 import spark.Response
 
 
-class ResourceCreation(private val portAndRoute: PortUtil.PortAndRoute, private val parsedInput: ParsedInput, private val initialRepoFile: String?) : Action {
+class ResourceCreation(private val portAndRoute: PortManager.PortAndRoute, private val parsedInput: ParsedInput, private val initialRepoFile: String?) : Action {
 
     override fun run(arguments: Set<ParsedArgument>) {
-        if (!PortUtil.setPort(portAndRoute.port)) {
+        if (!PortManager.setPort(portAndRoute.port)) {
             parsedInput.errors.add("Port was already set. Route cannot be set.")
             return
         }

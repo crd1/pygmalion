@@ -1,7 +1,7 @@
 package net.rudoll.pygmalion.handlers.oauth
 
 import com.google.gson.Gson
-import net.rudoll.pygmalion.common.RandomizerUtil
+import net.rudoll.pygmalion.common.Randomizer
 import java.util.concurrent.TimeUnit
 
 object OAuthGuard {
@@ -17,7 +17,7 @@ object OAuthGuard {
     }
 
     fun issueAuthorizationCode(redirectUri: String, clientId: String): AuthorizationCode {
-        val authorizationCode = AuthorizationCode(redirectUri, clientId, System.currentTimeMillis(), RandomizerUtil.getRandomString(20), true)
+        val authorizationCode = AuthorizationCode(redirectUri, clientId, System.currentTimeMillis(), Randomizer.getRandomString(20), true)
         storeAuthorizationCode(authorizationCode)
         return authorizationCode
     }

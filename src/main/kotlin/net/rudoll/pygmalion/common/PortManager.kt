@@ -5,7 +5,7 @@ import net.rudoll.pygmalion.model.ParsedInput
 import net.rudoll.pygmalion.model.StateHolder
 import spark.Spark
 
-object PortUtil {
+object PortManager {
     fun setPort(port: Int?): Boolean {
         if (port == null) {
             if (!StateHolder.state.portSet) {

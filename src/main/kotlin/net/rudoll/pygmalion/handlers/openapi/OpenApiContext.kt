@@ -10,7 +10,7 @@ import net.rudoll.pygmalion.handlers.arguments.parsedarguments.ParsedArgument
 import net.rudoll.pygmalion.model.Action
 import net.rudoll.pygmalion.model.ParsedInput
 import net.rudoll.pygmalion.common.HttpCallMapper
-import net.rudoll.pygmalion.common.PortUtil
+import net.rudoll.pygmalion.common.PortManager
 import spark.Request
 import spark.Response
 import java.net.URL
@@ -33,7 +33,7 @@ class OpenApiContext(private val openAPI: OpenAPI) {
         try {
             val port = URL(servers.first().url).port
             if (port != -1) {
-                portSet = PortUtil.setPort(port)
+                portSet = PortManager.setPort(port)
             }
         } catch (e: Exception) {
             //ignore

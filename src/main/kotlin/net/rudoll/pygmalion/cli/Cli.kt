@@ -5,7 +5,7 @@ import net.rudoll.pygmalion.model.Input
 import net.rudoll.pygmalion.model.ParseStage
 import net.rudoll.pygmalion.model.ParsedInput
 import net.rudoll.pygmalion.properties.PropertiesProvider
-import net.rudoll.pygmalion.common.HandlerDiscoveryUtil.findHandlers
+import net.rudoll.pygmalion.common.HandlerDiscoverer.findHandlers
 import java.util.*
 
 

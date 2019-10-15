@@ -9,7 +9,7 @@ import net.rudoll.pygmalion.model.Input
 import net.rudoll.pygmalion.model.ParseStage
 import net.rudoll.pygmalion.model.ParsedInput
 import net.rudoll.pygmalion.common.HttpCallMapper
-import net.rudoll.pygmalion.common.PortUtil
+import net.rudoll.pygmalion.common.PortManager
 import spark.Request
 import spark.Response
 
@@ -29,7 +29,7 @@ object WhenHandler : Handler {
     override fun handle(input: Input, parsedInput: ParsedInput) {
         val method = input.second()
         val target = input.third()
-        val portAndRoute = PortUtil.getPortAndRoute(target)
+        val portAndRoute = PortManager.getPortAndRoute(target)
         input.consume(3)
         if (input.first() == "then") {
             input.consume(1)
@@ -45,7 +45,7 @@ object WhenHandler : Handler {
         parsedInput.actions.add(object : Action {
             override fun run(arguments: Set<ParsedArgument>) {
                 parsedInput.logs.add("Mapping routingContext $routingContext")
-                if (!PortUtil.setPort(portAndRoute.port)) {
+                if (!PortManager.setPort(portAndRoute.port)) {
                     parsedInput.errors.add("Port was already set. Route cannot be set.")
                     return
                 }

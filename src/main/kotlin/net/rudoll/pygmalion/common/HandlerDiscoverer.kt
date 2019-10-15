@@ -9,7 +9,7 @@ import org.reflections.util.ConfigurationBuilder
 import org.reflections.util.FilterBuilder
 import java.util.*
 
-object HandlerDiscoveryUtil {
+object HandlerDiscoverer {
 
     fun findHandlers(packageName: String): List<Handler> {
         val classLoadersList = LinkedList<ClassLoader>()

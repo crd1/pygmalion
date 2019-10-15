@@ -3,7 +3,7 @@ package net.rudoll.pygmalion.handlers.port
 import net.rudoll.pygmalion.handlers.Handler
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.ParsedArgument
 import net.rudoll.pygmalion.model.*
-import net.rudoll.pygmalion.common.PortUtil
+import net.rudoll.pygmalion.common.PortManager
 
 object PortHandler : Handler {
     override fun getParseStage(): ParseStage {
@@ -36,7 +36,7 @@ object PortHandler : Handler {
                     parsedInput.errors.add("Port was already set. Please use another instance of this application.")
                     return
                 }
-                PortUtil.setPort(port)
+                PortManager.setPort(port)
             }
         })
     }
