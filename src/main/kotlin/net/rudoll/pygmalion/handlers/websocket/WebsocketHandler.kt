@@ -3,10 +3,7 @@ package net.rudoll.pygmalion.handlers.websocket
 import net.rudoll.pygmalion.handlers.Handler
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.LogArgument
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.ParsedArgument
-import net.rudoll.pygmalion.model.Action
-import net.rudoll.pygmalion.model.Input
-import net.rudoll.pygmalion.model.ParseStage
-import net.rudoll.pygmalion.model.ParsedInput
+import net.rudoll.pygmalion.model.*
 import net.rudoll.pygmalion.util.PortUtil
 import spark.Spark.init
 import spark.Spark.webSocket
@@ -32,7 +29,9 @@ object WebsocketHandler : Handler {
             override fun run(arguments: Set<ParsedArgument>) {
                 PortUtil.ensurePortIsSet(parsedInput)
                 parsedInput.logs.add("Adding websocket resource for $path.")
-                webSocket(path, WebsocketResource(path, parsedInput.arguments.contains(LogArgument)))
+                val websocketResource = WebsocketResource(path, parsedInput.arguments.contains(LogArgument))
+                webSocket(path, websocketResource)
+                StateHolder.state.websocketResources[path] = websocketResource
             }
         })
     }
