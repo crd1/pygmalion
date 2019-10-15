@@ -116,6 +116,12 @@ It is also possible to schedule recurring websocket messages like this:
 ```
 This will send the message PING to all clients connected to the `/test` websocket every 5 seconds.
 
+Also, it is possible to configure a response to incoming messages:
+```
+> websocket /test respond ${message}
+```
+This will simply echo the incoming message.
+
 ## OpenAPI support
 ```
 > openapi spec.yml
