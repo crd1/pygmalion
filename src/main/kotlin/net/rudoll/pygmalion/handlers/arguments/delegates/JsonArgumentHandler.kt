@@ -13,7 +13,7 @@ object JsonArgumentHandler : Handler {
     }
 
     override fun getDocumentation(): String {
-        return "--json: Use JSON format"
+        return "--json: Use JSON format (for OpenAPI)"
     }
 
     override fun canHandle(input: Input): Boolean {

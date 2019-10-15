@@ -13,7 +13,7 @@ object YamlArgumentHandler : Handler {
     }
 
     override fun getDocumentation(): String {
-        return "--yaml: Use YAML format"
+        return "--yaml: Use YAML format (for OpenAPI)"
     }
 
     override fun canHandle(input: Input): Boolean {
