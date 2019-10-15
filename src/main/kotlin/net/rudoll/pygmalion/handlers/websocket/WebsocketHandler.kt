@@ -127,7 +127,7 @@ object WebsocketHandler : Handler {
     }
 
     override fun getDocumentation(): String {
-        return "websocket start | \$path [message \$message | recurring \$message \$intervalInMs]"
+        return "websocket start | \$path [message \$message | recurring \$message \$intervalInMs | respond \$message]"
     }
 
     override fun getParseStage(): ParseStage {
