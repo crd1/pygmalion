@@ -64,6 +64,11 @@ object Cli {
         return scanner.nextLine()
     }
 
+    fun log(message: String) {
+        removePrompt()
+        print(message)
+    }
+
     fun print(message: String, promptBehaviour: PrintPromptBehaviour = PrintPromptBehaviour.WITH_PROMPT) {
         System.out.println(message)
         if (promptBehaviour == PrintPromptBehaviour.WITH_PROMPT) {

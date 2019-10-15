@@ -23,10 +23,7 @@ object HttpCallMapperUtil {
     private val ORIGIN = "Origin"
 
     fun map(method: String, route: String, parsedInput: ParsedInput, resultCallback: ResultCallback) {
-        if (!StateHolder.state.portSet) {
-            parsedInput.logs.add("Setting default port 80")
-            PortUtil.setPort(80)
-        }
+        PortUtil.ensurePortIsSet(parsedInput)
         val requestHandler = { request: Request, response: Response -> handleCall(request, response, parsedInput, resultCallback) }
         parsedInput.logs.add("Mapping route $route for method $method")
         when (method.toLowerCase()) {
@@ -53,8 +50,7 @@ object HttpCallMapperUtil {
         }
         val result = resultCallback.getResult(request, response)
         if (shouldLog) {
-            Cli.removePrompt()
-            Cli.print("< ${DateUtil.now()} | ${request.url()} | Status ${response.status()} | Body length: ${result.length}${if (arguments.contains(LogBodyArgument)) " | Body: ${request.body()} | Response: $result" else ""}")
+            Cli.log("< ${DateUtil.now()} | ${request.url()} | Status ${response.status()} | Body length: ${result.length}${if (arguments.contains(LogBodyArgument)) " | Body: ${request.body()} | Response: $result" else ""}")
         }
         setContentType(response, parsedInput)
         return result

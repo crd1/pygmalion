@@ -1,6 +1,7 @@
 package net.rudoll.pygmalion.util
 
 import net.rudoll.pygmalion.handlers.openapi.export.OpenApiMonitor
+import net.rudoll.pygmalion.model.ParsedInput
 import net.rudoll.pygmalion.model.StateHolder
 import spark.Spark
 
@@ -27,6 +28,13 @@ object PortUtil {
         val port = regex.find(target)?.value?.replace(":", "")
         val route = target.substring(port?.length ?: 0)
         return PortAndRoute(port?.toInt(), route)
+    }
+
+    fun ensurePortIsSet(parsedInput: ParsedInput) {
+        if (!StateHolder.state.portSet) {
+            parsedInput.logs.add("Setting default port 80")
+            setPort(80)
+        }
     }
 
     data class PortAndRoute(val port: Int?, val route: String)
