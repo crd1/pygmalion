@@ -50,7 +50,7 @@ object HttpCallMapper {
         }
         val result = resultCallback.getResult(request, response)
         if (shouldLog) {
-            Cli.log("< ${DateUtil.now()} | ${request.url()} | Status ${response.status()} | Body length: ${result.length}${if (arguments.contains(LogBodyArgument)) " | Body: ${request.body()} | Response: $result" else ""}")
+            Cli.log("< ${DateFormatter.now()} | ${request.url()} | Status ${response.status()} | Body length: ${result.length}${if (arguments.contains(LogBodyArgument)) " | Body: ${request.body()} | Response: $result" else ""}")
         }
         setContentType(response, parsedInput)
         return result
