@@ -1,7 +1,7 @@
 package net.rudoll.pygmalion.handlers.oauth
 
 import com.google.gson.Gson
-import net.rudoll.pygmalion.util.RandomizerUtil
+import net.rudoll.pygmalion.common.RandomizerUtil
 import java.util.concurrent.TimeUnit
 
 object OAuthGuard {

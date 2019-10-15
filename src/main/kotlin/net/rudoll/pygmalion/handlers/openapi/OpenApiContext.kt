@@ -9,9 +9,8 @@ import io.swagger.v3.oas.models.servers.Server
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.ParsedArgument
 import net.rudoll.pygmalion.model.Action
 import net.rudoll.pygmalion.model.ParsedInput
-import net.rudoll.pygmalion.model.StateHolder
-import net.rudoll.pygmalion.util.HttpCallMapperUtil
-import net.rudoll.pygmalion.util.PortUtil
+import net.rudoll.pygmalion.common.HttpCallMapperUtil
+import net.rudoll.pygmalion.common.PortUtil
 import spark.Request
 import spark.Response
 import java.net.URL

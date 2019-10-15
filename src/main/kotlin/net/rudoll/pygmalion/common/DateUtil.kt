@@ -1,4 +1,4 @@
-package net.rudoll.pygmalion.util
+package net.rudoll.pygmalion.common
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

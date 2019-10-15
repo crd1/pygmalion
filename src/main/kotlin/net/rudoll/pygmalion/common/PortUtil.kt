@@ -1,4 +1,4 @@
-package net.rudoll.pygmalion.util
+package net.rudoll.pygmalion.common
 
 import net.rudoll.pygmalion.handlers.openapi.export.OpenApiMonitor
 import net.rudoll.pygmalion.model.ParsedInput

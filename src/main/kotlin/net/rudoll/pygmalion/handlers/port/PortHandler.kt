@@ -3,8 +3,7 @@ package net.rudoll.pygmalion.handlers.port
 import net.rudoll.pygmalion.handlers.Handler
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.ParsedArgument
 import net.rudoll.pygmalion.model.*
-import net.rudoll.pygmalion.util.PortUtil
-import spark.Spark
+import net.rudoll.pygmalion.common.PortUtil
 
 object PortHandler : Handler {
     override fun getParseStage(): ParseStage {

@@ -1,5 +1,6 @@
 package net.rudoll.pygmalion.handlers.`when`.dynamicretval
 
+import net.rudoll.pygmalion.common.DynamicRetValProcessor
 import spark.Request
 
 class PatternRetVal(private val input: String, private val statusCode: Int) : DynamicRetVal {

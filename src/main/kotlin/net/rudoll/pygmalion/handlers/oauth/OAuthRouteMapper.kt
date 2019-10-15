@@ -1,7 +1,7 @@
 package net.rudoll.pygmalion.handlers.oauth
 
 import net.rudoll.pygmalion.model.ParsedInput
-import net.rudoll.pygmalion.util.HttpCallMapperUtil
+import net.rudoll.pygmalion.common.HttpCallMapperUtil
 
 object OAuthRouteMapper {
     fun createOAuthRoutes(basePath: String, parsedInput: ParsedInput) {

@@ -1,6 +1,6 @@
 package net.rudoll.pygmalion.handlers.oauth
 
-import net.rudoll.pygmalion.util.HttpCallMapperUtil
+import net.rudoll.pygmalion.common.HttpCallMapperUtil
 import spark.Request
 import spark.Response
 import spark.Spark.halt

@@ -1,4 +1,4 @@
-package net.rudoll.pygmalion.util
+package net.rudoll.pygmalion.common
 
 import io.swagger.v3.oas.models.Operation
 import net.rudoll.pygmalion.cli.Cli

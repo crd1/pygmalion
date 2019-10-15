@@ -1,4 +1,4 @@
-package net.rudoll.pygmalion.util
+package net.rudoll.pygmalion.common
 
 import java.util.concurrent.ThreadLocalRandom
 import java.util.stream.Collectors

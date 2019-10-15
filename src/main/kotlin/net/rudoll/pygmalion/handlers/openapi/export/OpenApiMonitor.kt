@@ -13,7 +13,7 @@ import io.swagger.v3.oas.models.responses.ApiResponse
 import io.swagger.v3.oas.models.responses.ApiResponses
 import io.swagger.v3.oas.models.servers.Server
 import net.rudoll.pygmalion.model.StateHolder
-import net.rudoll.pygmalion.util.HttpCallMapperUtil
+import net.rudoll.pygmalion.common.HttpCallMapperUtil
 
 object OpenApiMonitor {
 

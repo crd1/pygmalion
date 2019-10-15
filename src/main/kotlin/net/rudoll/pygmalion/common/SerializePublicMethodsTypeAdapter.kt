@@ -1,4 +1,4 @@
-package net.rudoll.pygmalion.util
+package net.rudoll.pygmalion.common
 
 import com.google.gson.*
 import com.google.gson.stream.JsonReader
