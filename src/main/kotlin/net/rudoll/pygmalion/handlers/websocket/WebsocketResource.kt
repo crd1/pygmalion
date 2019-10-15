@@ -5,32 +5,34 @@ import net.rudoll.pygmalion.common.DynamicRetValProcessor
 import net.rudoll.pygmalion.handlers.`when`.dynamicretval.DynamicRetVal
 import org.eclipse.jetty.websocket.api.Session
 import org.eclipse.jetty.websocket.api.WebSocketException
-import org.eclipse.jetty.websocket.api.WebSocketListener
+import org.eclipse.jetty.websocket.api.annotations.*
 
-class WebsocketResource(private val path: String, private val shouldLog: Boolean) : WebSocketListener {
+@WebSocket
+class WebsocketResource(private val path: String, private val shouldLog: Boolean) {
 
     private val sessions = mutableListOf<Session>()
     private val dynamicRetValProcessor = DynamicRetValProcessor()
 
-    override fun onWebSocketError(cause: Throwable) {
+    @OnWebSocketError
+    fun onWebSocketError(cause: Throwable) {
         log("A websocket error occured: ${cause.message}")
     }
 
-    override fun onWebSocketClose(statusCode: Int, reason: String?) {
+    @OnWebSocketClose
+    fun onWebSocketClose(session: Session, statusCode: Int, reason: String?) {
         log("Websocket connection to $path closed.")
+        sessions.remove(session)
     }
 
-    override fun onWebSocketConnect(session: Session) {
+    @OnWebSocketConnect
+    fun onWebSocketConnect(session: Session) {
         log("Websocket connection to $path accepted.")
         sessions.add(session)
     }
 
-    override fun onWebSocketText(message: String) {
+    @OnWebSocketMessage
+    fun onWebSocketText(session: Session, message: String) {
         log("Websocket message to $path reveived: $message")
-    }
-
-    override fun onWebSocketBinary(payload: ByteArray?, offset: Int, len: Int) {
-        log("Binary websocket message to $path received.")
     }
 
     fun broadcast(message: String) {
