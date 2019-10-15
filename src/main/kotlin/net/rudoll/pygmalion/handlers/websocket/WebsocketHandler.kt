@@ -24,8 +24,39 @@ object WebsocketHandler : Handler {
     }
 
     private fun handleCommandForWebsocket(path: String, input: Input, parsedInput: ParsedInput) {
-        //TODO
-        parsedInput.actions.add(object : Action {
+        if (!websocketResourceExists(path)) {
+            parsedInput.actions.add(websocketCreationAction(path, parsedInput))
+        }
+        if (!input.hasNext()) {
+            return
+        }
+        when (input.first()) {
+            "message" -> handleWebsocketMessageCommand(path, input, parsedInput)
+            else -> return
+        }
+    }
+
+    private fun handleWebsocketMessageCommand(path: String, input: Input, parsedInput: ParsedInput) {
+        input.consume(1)
+        if (!input.hasNext()) {
+            parsedInput.errors.add("No message specified")
+        }
+        val message = input.first()
+        input.consume(1)
+        parsedInput.actions.add(sendWebsocketMessageAction(path, message, parsedInput))
+    }
+
+    private fun sendWebsocketMessageAction(path: String, message: String, parsedInput: ParsedInput): Action {
+        return object : Action {
+            override fun run(arguments: Set<ParsedArgument>) {
+                parsedInput.logs.add("Sending websocket message to $path.")
+                StateHolder.state.websocketResources[path]!!.broadcast(message)
+            }
+        }
+    }
+
+    private fun websocketCreationAction(path: String, parsedInput: ParsedInput): Action {
+        return object : Action {
             override fun run(arguments: Set<ParsedArgument>) {
                 PortUtil.ensurePortIsSet(parsedInput)
                 parsedInput.logs.add("Adding websocket resource for $path.")
@@ -33,7 +64,11 @@ object WebsocketHandler : Handler {
                 webSocket(path, websocketResource)
                 StateHolder.state.websocketResources[path] = websocketResource
             }
-        })
+        }
+    }
+
+    private fun websocketResourceExists(path: String): Boolean {
+        return StateHolder.state.websocketResources[path] != null
     }
 
     override fun canHandle(input: Input): Boolean {
