@@ -95,6 +95,26 @@ The following properties are injected by Pygmalion via bindings and can be acces
 |timestamp|Current timestamp (ms since the epoch)|
 |uri|The request's URI|
 
+## Websockets
+It is possible to create websocket endpoints like this:
+```
+> websocket /test1
+> websocket /test2
+> websocket start
+```
+(Due to the underlying framework it is only possible to create websockets before every other request mapping.)
+
+After setting up the endpoints messages can be sent to the websocket's clients:
+```
+> websocket /test
+> websocket start
+> websocket /test message 'Hello'
+```
+It is also possible to schedule recurring websocket messages like this:
+```
+> websocket /test recurring PING 5000
+```
+This will send the message PING to all clients connected to the `/test` websocket every 5 seconds.
 
 ## OpenAPI support
 ```
