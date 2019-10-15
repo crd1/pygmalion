@@ -76,8 +76,7 @@ object WebsocketHandler : Handler {
     }
 
     override fun getDocumentation(): String {
-        //TODO
-        return "websocket TODO"
+        return "websocket [start | \$path [message \$message]]"
     }
 
     override fun getParseStage(): ParseStage {
