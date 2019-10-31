@@ -2,13 +2,11 @@
 
 This is a web mock CLI that can be used in order to create self-defined local endpoints for testing within seconds.
 
-## Building and installing (for Windows)
+## Building and installing
 - Clone this project.
 - `cd pygmalion`.
-- `gradlew clean build`.
+- `gradlew build`.
 - Add the `run` folder to your PATH.
-
-(I`m pretty sure you Linux guys get the idea and are able to do this in a similar way on your machine as well.)
 
 ## Usage
 ```
