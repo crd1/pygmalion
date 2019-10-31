@@ -48,7 +48,6 @@ Note that the resources can even be initialized from a JSON array stored in a fi
 > when get /test then 'This is served on port 8080.'
 ```
 Then check `http://localhost:8080/test`.
-(Unfortunately, due to a limitation in the underlying framework it is currently not possible to mock APIs on multiple ports at once.)
 
 ### Serve from file
 ```
