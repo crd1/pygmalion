@@ -5,12 +5,14 @@ import io.swagger.v3.oas.models.Operation
 import io.swagger.v3.oas.models.PathItem
 import io.swagger.v3.oas.models.media.Schema
 import io.swagger.v3.oas.models.responses.ApiResponses
+import io.swagger.v3.oas.models.security.SecurityScheme
 import io.swagger.v3.oas.models.servers.Server
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.ParsedArgument
 import net.rudoll.pygmalion.model.Action
 import net.rudoll.pygmalion.model.ParsedInput
 import net.rudoll.pygmalion.common.HttpCallMapper
 import net.rudoll.pygmalion.common.PortManager
+import net.rudoll.pygmalion.handlers.oauth.OAuthRouteMapper
 import spark.Request
 import spark.Response
 import java.net.URL
@@ -23,6 +25,21 @@ class OpenApiContext(private val openAPI: OpenAPI) {
         val paths = openAPI.paths
         setPort(openAPI.servers, parsedInput)
         paths.forEach { path -> this.applyPath(path, parsedInput) }
+        openAPI.components?.securitySchemes?.let {
+            parsedInput.actions.add(object : Action {
+                override fun run(arguments: Set<ParsedArgument>) {
+                    applySecuritySchemes(it, parsedInput)
+                }
+            })
+        }
+    }
+
+    private fun applySecuritySchemes(securitySchemes: Map<String, SecurityScheme>, parsedInput: ParsedInput) {
+        securitySchemes.forEach { scheme ->
+            scheme.value.flows?.authorizationCode?.let {
+                OAuthRouteMapper.createOAuthRoutes(it.authorizationUrl, it.tokenUrl, parsedInput)
+            }
+        }
     }
 
     private fun setPort(servers: MutableList<Server>?, parsedInput: ParsedInput) {

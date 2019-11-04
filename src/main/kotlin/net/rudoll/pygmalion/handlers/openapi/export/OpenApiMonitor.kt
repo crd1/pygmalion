@@ -88,6 +88,9 @@ object OpenApiMonitor {
     }
 
     fun addComponentSchemas(components: Components) {
+        if (components.schemas == null) {
+            return
+        }
         ensureOpenApiSpecComponentsNotNull()
         components.schemas.forEach { StateHolder.state.openAPISpec.components.addSchemas(it.key, it.value) }
     }
