@@ -9,47 +9,42 @@ import net.rudoll.pygmalion.handlers.openapi.export.OpenApiMonitor
 
 object OAuthRouteMapper {
 
-    private val authorizationEndpoint: String = "/authorize"
-    private val tokenEndpoint: String = "/token"
-
-    fun createOAuthRoutes(basePath: String, parsedInput: ParsedInput) {
-        createAuthorizeEndpoint(basePath, parsedInput)
-        createTokenEndpoint(basePath, parsedInput)
-        OpenApiMonitor.addSecurityScheme("oauth", getOAuthSecurityScheme(basePath))
+    fun createOAuthRoutes(authorizationEndpoint: String, tokenEndpoint: String, parsedInput: ParsedInput) {
+        createAuthorizationEndpoint(authorizationEndpoint, parsedInput)
+        createTokenEndpoint(tokenEndpoint, parsedInput)
+        OpenApiMonitor.addSecurityScheme("oauth", getOAuthSecurityScheme(authorizationEndpoint, tokenEndpoint))
     }
 
-    private fun getOAuthSecurityScheme(basePath: String): SecurityScheme {
+    private fun getOAuthSecurityScheme(authorizationEndpoint: String, tokenEndpoint: String): SecurityScheme {
         val scheme = SecurityScheme()
         scheme.type(SecurityScheme.Type.OAUTH2)
         scheme.description = "This API uses OAuth 2 with the authorization code grant flow."
-        scheme.flows(getFlows(basePath))
+        scheme.flows(getFlows(authorizationEndpoint, tokenEndpoint))
         return scheme
     }
 
-    private fun getFlows(basePath: String): OAuthFlows {
+    private fun getFlows(authorizationEndpoint: String, tokenEndpoint: String): OAuthFlows {
         val flows = OAuthFlows()
-        flows.authorizationCode(getAuthorizationCodeFlow(basePath))
+        flows.authorizationCode(getAuthorizationCodeFlow(authorizationEndpoint, tokenEndpoint))
         return flows
     }
 
-    private fun getAuthorizationCodeFlow(basePath: String): OAuthFlow {
+    private fun getAuthorizationCodeFlow(authorizationEndpoint: String, tokenEndpoint: String): OAuthFlow {
         val authorizationCodeFlow = OAuthFlow()
-        authorizationCodeFlow.authorizationUrl = "$basePath$tokenEndpoint"
-        authorizationCodeFlow.tokenUrl = "$basePath$tokenEndpoint"
+        authorizationCodeFlow.authorizationUrl = authorizationEndpoint
+        authorizationCodeFlow.tokenUrl = tokenEndpoint
         return authorizationCodeFlow
     }
 
 
-    private fun createTokenEndpoint(basePath: String, parsedInput: ParsedInput) {
-        val endpoint = "$basePath$tokenEndpoint"
-        parsedInput.logs.add("Creating endpoint $endpoint")
-        HttpCallMapper.map("post", endpoint, parsedInput, TokenEndpointCallback())
+    private fun createTokenEndpoint(tokenEndpoint: String, parsedInput: ParsedInput) {
+        parsedInput.logs.add("Creating endpoint $tokenEndpoint")
+        HttpCallMapper.map("post", tokenEndpoint, parsedInput, TokenEndpointCallback())
     }
 
 
-    private fun createAuthorizeEndpoint(basePath: String, parsedInput: ParsedInput) {
-        val endpoint = "$basePath$authorizationEndpoint"
-        parsedInput.logs.add("Creating endpoint $endpoint")
-        HttpCallMapper.map("get", endpoint, parsedInput, AuthorizeEndpointCallback())
+    private fun createAuthorizationEndpoint(authorizationEndpoint: String, parsedInput: ParsedInput) {
+        parsedInput.logs.add("Creating endpoint $authorizationEndpoint")
+        HttpCallMapper.map("get", authorizationEndpoint, parsedInput, AuthorizeEndpointCallback())
     }
 }

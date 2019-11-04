@@ -18,7 +18,7 @@ object OAuthHandler : Handler {
         input.consume(1)
         parsedInput.actions.add(object : Action {
             override fun run(arguments: Set<ParsedArgument>) {
-                OAuthRouteMapper.createOAuthRoutes(basePath, parsedInput)
+                OAuthRouteMapper.createOAuthRoutes("$basePath/authorize", "$basePath/token", parsedInput)
             }
         })
     }
