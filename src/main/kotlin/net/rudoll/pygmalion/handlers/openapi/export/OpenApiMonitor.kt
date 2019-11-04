@@ -11,9 +11,10 @@ import io.swagger.v3.oas.models.media.Content
 import io.swagger.v3.oas.models.media.MediaType
 import io.swagger.v3.oas.models.responses.ApiResponse
 import io.swagger.v3.oas.models.responses.ApiResponses
+import io.swagger.v3.oas.models.security.SecurityScheme
 import io.swagger.v3.oas.models.servers.Server
-import net.rudoll.pygmalion.model.StateHolder
 import net.rudoll.pygmalion.common.HttpCallMapper
+import net.rudoll.pygmalion.model.StateHolder
 
 object OpenApiMonitor {
 
@@ -81,11 +82,20 @@ object OpenApiMonitor {
         return info
     }
 
-    fun addComponents(components: Components) {
+    fun addSecurityScheme(name: String, securityScheme: SecurityScheme) {
+        ensureOpenApiSpecComponentsNotNull()
+        StateHolder.state.openAPISpec.components.addSecuritySchemes(name, securityScheme)
+    }
+
+    fun addComponentSchemas(components: Components) {
+        ensureOpenApiSpecComponentsNotNull()
+        components.schemas.forEach { StateHolder.state.openAPISpec.components.addSchemas(it.key, it.value) }
+    }
+
+    private fun ensureOpenApiSpecComponentsNotNull() {
         if (StateHolder.state.openAPISpec.components == null) {
             StateHolder.state.openAPISpec.components = Components()
         }
-        components.schemas.forEach { StateHolder.state.openAPISpec.components.addSchemas(it.key, it.value) }
     }
 
     fun setPort(port: Int) {

@@ -12,7 +12,7 @@ object OpenApiParser {
         val openApiContext = OpenApiContext(openAPI)
         openApiContext.apply(parsedInput)
         if (openAPI.components != null) {
-            OpenApiMonitor.addComponents(openAPI.components)
+            OpenApiMonitor.addComponentSchemas(openAPI.components)
         }
     }
 
