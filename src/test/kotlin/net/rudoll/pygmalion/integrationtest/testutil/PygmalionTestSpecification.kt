@@ -1,5 +1,7 @@
 package net.rudoll.pygmalion.integrationtest.testutil
 
+import net.rudoll.pygmalion.integrationtest.PygmalionIntegrationTest
+
 class PygmalionTestSpecification(val pygmalionCommand: String) {
 
     internal var testCall: PygmalionTestCall? = null
@@ -8,8 +10,8 @@ class PygmalionTestSpecification(val pygmalionCommand: String) {
         return this
     }
 
-    fun whenCallingPygmalionWith(target: String, port: Int = 80): PygmalionTestCall {
-        this.testCall = PygmalionTestCall(target, port)
+    fun whenCallingPygmalionWith(target: String): PygmalionTestCall {
+        this.testCall = PygmalionTestCall(target, PygmalionIntegrationTest.testPort)
         return this.testCall!!
     }
 }

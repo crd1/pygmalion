@@ -14,9 +14,14 @@ class PygmalionIntegrationTest {
     }
 
     private fun executePygmalionTestSpecification(pygmalionTestSpecification: PygmalionTestSpecification) {
+        Cli.eval("port $testPort")
         Cli.eval(pygmalionTestSpecification.pygmalionCommand)
         pygmalionTestSpecification.testCall!!.execute()
         Cli.eval("reset")
         Cli.removePrompt()
+    }
+
+    companion object {
+        val testPort: Int = 8907
     }
 }
