@@ -123,10 +123,16 @@ class OpenApiContext(private val openAPI: OpenAPI) {
             return mediaType.example.toString()
         }
         if (mediaType.examples != null && !mediaType.examples.isEmpty()) {
-            return mediaType.examples.values.first().value.toString()
+            val exampleValue = mediaType.examples.values.first().value
+            if (exampleValue != null) {
+                return exampleValue.toString()
+            }
         }
-        val jsonObject = ExampleResponseGenerator(openAPI).getFromSchema(mediaType.schema)
-        return jsonObject.toString()
+        if (mediaType.schema != null) {
+            val jsonObject = ExampleResponseGenerator(openAPI).getFromSchema(mediaType.schema)
+            return jsonObject.toString()
+        }
+        return ""
     }
 
     private fun getPreferredContentType(contentTypes: Set<String>): String {
