@@ -13,6 +13,9 @@ import spark.Response
 
 class ResourceCreation(private val portAndRoute: PortManager.PortAndRoute, private val parsedInput: ParsedInput, private val initialRepoFile: String?) : Action {
 
+    private val resourceIndex = resourceCounter++
+
+
     override fun run(arguments: Set<ParsedArgument>) {
         if (!PortManager.setPort(portAndRoute.port)) {
             parsedInput.errors.add("Port was already set. Route cannot be set.")
@@ -56,7 +59,7 @@ class ResourceCreation(private val portAndRoute: PortManager.PortAndRoute, priva
     }
 
     private fun updateCallback(resourceContainer: ResourceContainer): HttpCallMapper.ResultCallback {
-        return object : ResourceResultCallback(HttpCallMapper.ResultCallback.ResultCallbackDescription(200, "Updates the resource")) {
+        return object : ObservingResourceResultCallback(HttpCallMapper.ResultCallback.ResultCallbackDescription(200, "Updates the resource"), resourceContainer, resourceIndex.toString()) {
             override fun getResult(request: Request, response: Response): String {
                 return resourceContainer.set(request.params(":id"), request.body(), response)
             }
@@ -64,7 +67,7 @@ class ResourceCreation(private val portAndRoute: PortManager.PortAndRoute, priva
     }
 
     private fun createCallback(resourceContainer: ResourceContainer): HttpCallMapper.ResultCallback {
-        return object : ResourceResultCallback(HttpCallMapper.ResultCallback.ResultCallbackDescription(201, "Creates new resource")) {
+        return object : ObservingResourceResultCallback(HttpCallMapper.ResultCallback.ResultCallbackDescription(201, "Creates new resource"), resourceContainer, resourceIndex.toString()) {
             override fun getResult(request: Request, response: Response): String {
                 return resourceContainer.new(request.body(), response)
             }
@@ -87,5 +90,8 @@ class ResourceCreation(private val portAndRoute: PortManager.PortAndRoute, priva
         }
     }
 
+    companion object {
+        var resourceCounter = 0
+    }
 
 }

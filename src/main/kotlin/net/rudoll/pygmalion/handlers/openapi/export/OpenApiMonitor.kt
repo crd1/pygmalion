@@ -9,6 +9,7 @@ import io.swagger.v3.oas.models.examples.Example
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.media.Content
 import io.swagger.v3.oas.models.media.MediaType
+import io.swagger.v3.oas.models.media.Schema
 import io.swagger.v3.oas.models.responses.ApiResponse
 import io.swagger.v3.oas.models.responses.ApiResponses
 import io.swagger.v3.oas.models.security.SecurityScheme
@@ -30,7 +31,7 @@ object OpenApiMonitor {
     }
 
     private fun addMethod(pathItem: PathItem, method: String, resultCallbackDescription: HttpCallMapper.ResultCallback.ResultCallbackDescription) {
-        val operation = getOperation(resultCallbackDescription)
+        val operation = resultCallbackDescription.toOperation()
         when (method.toLowerCase()) {
             "get" -> pathItem.get(operation)
             "post" -> pathItem.post(operation)
@@ -40,23 +41,7 @@ object OpenApiMonitor {
         }
     }
 
-    private fun getOperation(resultCallbackDescription: HttpCallMapper.ResultCallback.ResultCallbackDescription): Operation {
-        if (resultCallbackDescription.operation != null) {
-            return resultCallbackDescription.operation
-        }
-        val operation = Operation()
-        addApiResponses(operation, resultCallbackDescription)
-        return operation
-    }
-
-    private fun addApiResponses(operation: Operation, resultCallbackDescription: HttpCallMapper.ResultCallback.ResultCallbackDescription) {
-        val mediaType = MediaType().addExamples("example1", getExample(resultCallbackDescription.exampleValue))
-        val content = Content().addMediaType(resultCallbackDescription.contentType, mediaType)
-        val apiResponses = ApiResponses().addApiResponse(resultCallbackDescription.statusCode.toString(), ApiResponse().description(resultCallbackDescription.description).content(content))
-        operation.responses(apiResponses)
-    }
-
-    private fun getExample(rawExampleValue: String): Example {
+    internal fun getExample(rawExampleValue: String): Example {
         val example = Example()
         var exampleValue: Any = rawExampleValue
         try {
@@ -91,8 +76,12 @@ object OpenApiMonitor {
         if (components.schemas == null) {
             return
         }
+        components.schemas.forEach { addSchema(it.key, it.value) }
+    }
+
+    fun addSchema(key: String, schema: Schema<Any>) {
         ensureOpenApiSpecComponentsNotNull()
-        components.schemas.forEach { StateHolder.state.openAPISpec.components.addSchemas(it.key, it.value) }
+        StateHolder.state.openAPISpec.components.addSchemas(key, schema)
     }
 
     private fun ensureOpenApiSpecComponentsNotNull() {
@@ -106,4 +95,19 @@ object OpenApiMonitor {
         server.url = "http://localhost:$port"
         StateHolder.state.openAPISpec.addServersItem(server)
     }
+}
+
+fun HttpCallMapper.ResultCallback.ResultCallbackDescription.toApiResponses(): ApiResponses {
+    val mediaType = MediaType().addExamples("example1", OpenApiMonitor.getExample(this.exampleValue))
+    val content = Content().addMediaType(this.contentType, mediaType)
+    return ApiResponses().addApiResponse(statusCode.toString(), ApiResponse().description(description).content(content))
+}
+
+fun HttpCallMapper.ResultCallback.ResultCallbackDescription.toOperation(): Operation {
+    if (this.operation != null) {
+        return this.operation
+    }
+    val operation = Operation()
+    operation.responses(this.toApiResponses())
+    return operation
 }

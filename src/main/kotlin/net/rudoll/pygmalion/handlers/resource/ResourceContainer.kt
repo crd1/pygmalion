@@ -10,7 +10,7 @@ import java.util.*
 
 class ResourceContainer(private val keyProperty: String) {
 
-    private val resources = mutableMapOf<String, JsonElement>()
+    internal val resources = mutableMapOf<String, JsonElement>()
     private val gson = Gson()
     private val jsonParser = JsonParser()
 
