@@ -48,11 +48,7 @@ class ResourceCreation(private val portAndRoute: PortManager.PortAndRoute, priva
     }
 
     private fun deleteCallback(resourceContainer: ResourceContainer): HttpCallMapper.ResultCallback {
-        return object : HttpCallMapper.ResultCallback {
-            override fun getResultCallbackDescription(): HttpCallMapper.ResultCallback.ResultCallbackDescription? {
-                return HttpCallMapper.ResultCallback.ResultCallbackDescription(200, "Deletes resource")
-            }
-
+        return object : ResourceResultCallback(HttpCallMapper.ResultCallback.ResultCallbackDescription(200, "Deletes resource")) {
             override fun getResult(request: Request, response: Response): String {
                 return resourceContainer.delete(request.params(":id"), response)
             }
@@ -60,11 +56,7 @@ class ResourceCreation(private val portAndRoute: PortManager.PortAndRoute, priva
     }
 
     private fun updateCallback(resourceContainer: ResourceContainer): HttpCallMapper.ResultCallback {
-        return object : HttpCallMapper.ResultCallback {
-            override fun getResultCallbackDescription(): HttpCallMapper.ResultCallback.ResultCallbackDescription? {
-                return HttpCallMapper.ResultCallback.ResultCallbackDescription(200, "Updates the resource")
-            }
-
+        return object : ResourceResultCallback(HttpCallMapper.ResultCallback.ResultCallbackDescription(200, "Updates the resource")) {
             override fun getResult(request: Request, response: Response): String {
                 return resourceContainer.set(request.params(":id"), request.body(), response)
             }
@@ -72,11 +64,7 @@ class ResourceCreation(private val portAndRoute: PortManager.PortAndRoute, priva
     }
 
     private fun createCallback(resourceContainer: ResourceContainer): HttpCallMapper.ResultCallback {
-        return object : HttpCallMapper.ResultCallback {
-            override fun getResultCallbackDescription(): HttpCallMapper.ResultCallback.ResultCallbackDescription? {
-                return HttpCallMapper.ResultCallback.ResultCallbackDescription(201, "Creates new resource")
-            }
-
+        return object : ResourceResultCallback(HttpCallMapper.ResultCallback.ResultCallbackDescription(201, "Creates new resource")) {
             override fun getResult(request: Request, response: Response): String {
                 return resourceContainer.new(request.body(), response)
             }
@@ -84,11 +72,7 @@ class ResourceCreation(private val portAndRoute: PortManager.PortAndRoute, priva
     }
 
     private fun getByIdCallback(resourceContainer: ResourceContainer): HttpCallMapper.ResultCallback {
-        return object : HttpCallMapper.ResultCallback {
-            override fun getResultCallbackDescription(): HttpCallMapper.ResultCallback.ResultCallbackDescription? {
-                return HttpCallMapper.ResultCallback.ResultCallbackDescription(200, "Retrieves resource by id")
-            }
-
+        return object : ResourceResultCallback(HttpCallMapper.ResultCallback.ResultCallbackDescription(200, "Retrieves resource by id")) {
             override fun getResult(request: Request, response: Response): String {
                 return resourceContainer.get(request.params(":id"), response);
             }
@@ -96,11 +80,7 @@ class ResourceCreation(private val portAndRoute: PortManager.PortAndRoute, priva
     }
 
     private fun getAllCallback(resourceContainer: ResourceContainer): HttpCallMapper.ResultCallback {
-        return object : HttpCallMapper.ResultCallback {
-            override fun getResultCallbackDescription(): HttpCallMapper.ResultCallback.ResultCallbackDescription? {
-                return HttpCallMapper.ResultCallback.ResultCallbackDescription(200, "Retrieves all resources")
-            }
-
+        return object : ResourceResultCallback(HttpCallMapper.ResultCallback.ResultCallbackDescription(200, "Retrieves all resources")) {
             override fun getResult(request: Request, response: Response): String {
                 return resourceContainer.getAll()
             }
