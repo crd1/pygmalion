@@ -79,7 +79,7 @@ object OpenApiMonitor {
         components.schemas.forEach { addSchema(it.key, it.value) }
     }
 
-    fun addSchema(key: String, schema: Schema<Any>) {
+    fun addSchema(key: String, schema: Schema<*>) {
         ensureOpenApiSpecComponentsNotNull()
         StateHolder.state.openAPISpec.components.addSchemas(key, schema)
     }

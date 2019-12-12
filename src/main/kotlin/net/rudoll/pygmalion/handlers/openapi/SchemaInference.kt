@@ -8,12 +8,38 @@ import io.swagger.v3.oas.models.media.ArraySchema
 import io.swagger.v3.oas.models.media.Schema
 
 object SchemaInference {
-    fun from(elements: Set<JsonElement>): Schema<Any> {
-        val inferredSchemata = mutableListOf<Schema<Any>>()
+    fun from(elements: Set<JsonElement>): Schema<*> {
+        val inferredSchemata = mutableListOf<Schema<*>>()
         for (element in elements) {
             inferredSchemata.add(inferSchema(element))
         }
-        return if (!inferredSchemata.isEmpty()) inferredSchemata[0] else Schema() //we currently always use the first encountered element
+        return mergeSchemata(inferredSchemata)
+    }
+
+    private fun mergeSchemata(inferredSchemata: List<Schema<*>>): Schema<*> {
+        if (inferredSchemata.isEmpty()) {
+            return Schema<Any>()
+        }
+        val firstObservedSchema = inferredSchemata[0]
+        return if (firstObservedSchema is ArraySchema) {
+            mergeArraySchemata(inferredSchemata)
+        } else {
+            mergeObjectSchemata(inferredSchemata)
+        }
+    }
+
+    private fun mergeObjectSchemata(inferredSchemata: List<Schema<*>>): Schema<*> {
+        if (inferredSchemata[0].type != "object") {
+            return inferredSchemata[0] //not mergeable, this is our best guess
+        }
+        val mergedSchema = Schema<Any>()
+        mergedSchema.properties = mutableMapOf()
+        inferredSchemata.forEach { mergedSchema.properties.putAll(it.properties) }
+        return mergedSchema
+    }
+
+    private fun mergeArraySchemata(inferredSchemata: List<Schema<*>>): ArraySchema {
+        return ArraySchema().type("array").items(mergeObjectSchemata(inferredSchemata.filter { it is ArraySchema }.map { ((it as ArraySchema).items as Schema<*>) }))
     }
 
     private fun inferSchema(element: JsonElement): Schema<Any> {
