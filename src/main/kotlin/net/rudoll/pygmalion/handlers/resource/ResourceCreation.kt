@@ -1,5 +1,7 @@
 package net.rudoll.pygmalion.handlers.resource
 
+import io.swagger.v3.oas.models.parameters.RequestBody
+import io.swagger.v3.oas.models.responses.ApiResponses
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.AllowCorsArgument
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.KeyArgument
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.ParsedArgument
@@ -22,7 +24,7 @@ class ResourceCreation(private val portAndRoute: PortManager.PortAndRoute, priva
             return
         }
         val keyProperty = readKeyArgument(arguments, parsedInput)
-        val resourceContainer = ResourceContainer(keyProperty)
+        val resourceContainer = ResourceContainer(keyProperty, resourceIndex.toString())
         if (initialRepoFile != null) {
             val initialized = resourceContainer.init(initialRepoFile, parsedInput)
             if (!initialized) {
@@ -51,43 +53,87 @@ class ResourceCreation(private val portAndRoute: PortManager.PortAndRoute, priva
     }
 
     private fun deleteCallback(resourceContainer: ResourceContainer): HttpCallMapper.ResultCallback {
-        return object : ResourceResultCallback(HttpCallMapper.ResultCallback.ResultCallbackDescription(200, "Deletes resource")) {
+        return object : ResourceResultCallback(deleteOperationDescription()) {
             override fun getResult(request: Request, response: Response): String {
                 return resourceContainer.delete(request.params(":id"), response)
             }
         }
     }
 
+    private fun deleteOperationDescription(): HttpCallMapper.ResultCallback.ResultCallbackDescription {
+        return HttpCallMapper.ResultCallback.ResultCallbackDescription(200, "Deletes resource")
+    }
+
     private fun updateCallback(resourceContainer: ResourceContainer): HttpCallMapper.ResultCallback {
-        return object : ObservingResourceResultCallback(HttpCallMapper.ResultCallback.ResultCallbackDescription(200, "Updates the resource"), resourceContainer, resourceIndex.toString()) {
+        return object : ResourceResultCallback(updateOperationDescription(resourceContainer)) {
             override fun getResult(request: Request, response: Response): String {
                 return resourceContainer.set(request.params(":id"), request.body(), response)
             }
         }
     }
 
+    private fun updateOperationDescription(resourceContainer: ResourceContainer): HttpCallMapper.ResultCallback.ResultCallbackDescription {
+        val baseDescription = HttpCallMapper.ResultCallback.ResultCallbackDescription(200, "Updates the resource")
+        return baseDescription.copy(operation = object : SchemaObservingOperation(resourceContainer, baseDescription) {
+            override fun getRequestBody(): RequestBody {
+                return getInferredRequestBody()
+            }
+        })
+    }
+
     private fun createCallback(resourceContainer: ResourceContainer): HttpCallMapper.ResultCallback {
-        return object : ObservingResourceResultCallback(HttpCallMapper.ResultCallback.ResultCallbackDescription(201, "Creates new resource"), resourceContainer, resourceIndex.toString()) {
+        return object : ResourceResultCallback(createOperationDescription(resourceContainer)) {
             override fun getResult(request: Request, response: Response): String {
                 return resourceContainer.new(request.body(), response)
             }
         }
     }
 
+    private fun createOperationDescription(resourceContainer: ResourceContainer): HttpCallMapper.ResultCallback.ResultCallbackDescription {
+        val baseDescription = HttpCallMapper.ResultCallback.ResultCallbackDescription(201, "Creates new resource")
+        return baseDescription.copy(operation = object : SchemaObservingOperation(resourceContainer, baseDescription) {
+            override fun getRequestBody(): RequestBody {
+                return getInferredRequestBody()
+            }
+
+            override fun getResponses(): ApiResponses {
+                return getInferredApiResponse()
+            }
+        })
+    }
+
     private fun getByIdCallback(resourceContainer: ResourceContainer): HttpCallMapper.ResultCallback {
-        return object : ResourceResultCallback(HttpCallMapper.ResultCallback.ResultCallbackDescription(200, "Retrieves resource by id")) {
+        return object : ResourceResultCallback(getByIdOperationDescription(resourceContainer)) {
             override fun getResult(request: Request, response: Response): String {
                 return resourceContainer.get(request.params(":id"), response);
             }
         }
     }
 
+    private fun getByIdOperationDescription(resourceContainer: ResourceContainer): HttpCallMapper.ResultCallback.ResultCallbackDescription {
+        val baseDescription = HttpCallMapper.ResultCallback.ResultCallbackDescription(200, "Retrieves resource by id")
+        return baseDescription.copy(operation = object : SchemaObservingOperation(resourceContainer, baseDescription) {
+            override fun getResponses(): ApiResponses {
+                return getInferredApiResponse()
+            }
+        })
+    }
+
     private fun getAllCallback(resourceContainer: ResourceContainer): HttpCallMapper.ResultCallback {
-        return object : ResourceResultCallback(HttpCallMapper.ResultCallback.ResultCallbackDescription(200, "Retrieves all resources")) {
+        return object : ResourceResultCallback(getAllOperationDescription(resourceContainer)) {
             override fun getResult(request: Request, response: Response): String {
                 return resourceContainer.getAll()
             }
         }
+    }
+
+    private fun getAllOperationDescription(resourceContainer: ResourceContainer): HttpCallMapper.ResultCallback.ResultCallbackDescription {
+        val baseDescription = HttpCallMapper.ResultCallback.ResultCallbackDescription(200, "Retrieves all resources")
+        return baseDescription.copy(operation = object : SchemaObservingOperation(resourceContainer, baseDescription) {
+            override fun getResponses(): ApiResponses {
+                return getInferredApiResponseArray()
+            }
+        })
     }
 
     companion object {
@@ -95,3 +141,4 @@ class ResourceCreation(private val portAndRoute: PortManager.PortAndRoute, priva
     }
 
 }
+

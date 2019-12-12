@@ -8,7 +8,7 @@ import java.math.BigInteger
 import java.util.*
 
 
-class ResourceContainer(private val keyProperty: String) {
+class ResourceContainer(private val keyProperty: String, val name: String) {
 
     internal val resources = mutableMapOf<String, JsonElement>()
     private val gson = Gson()
