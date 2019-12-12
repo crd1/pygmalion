@@ -9,13 +9,14 @@ import net.rudoll.pygmalion.model.Action
 import net.rudoll.pygmalion.model.ParsedInput
 import net.rudoll.pygmalion.common.HttpCallMapper
 import net.rudoll.pygmalion.common.PortManager
+import net.rudoll.pygmalion.model.StateHolder
 import spark.Request
 import spark.Response
 
 
 class ResourceCreation(private val portAndRoute: PortManager.PortAndRoute, private val parsedInput: ParsedInput, private val initialRepoFile: String?) : Action {
 
-    private val resourceIndex = resourceCounter++
+    private val resourceIndex = StateHolder.state.resourceCounter++
 
 
     override fun run(arguments: Set<ParsedArgument>) {
@@ -24,7 +25,7 @@ class ResourceCreation(private val portAndRoute: PortManager.PortAndRoute, priva
             return
         }
         val keyProperty = readKeyArgument(arguments, parsedInput)
-        val resourceContainer = ResourceContainer(keyProperty, resourceIndex.toString())
+        val resourceContainer = ResourceContainer(keyProperty, inferResourceNameFromRoute(portAndRoute) + resourceIndex.toString())
         if (initialRepoFile != null) {
             val initialized = resourceContainer.init(initialRepoFile, parsedInput)
             if (!initialized) {
@@ -43,6 +44,11 @@ class ResourceCreation(private val portAndRoute: PortManager.PortAndRoute, priva
             HttpCallMapper.allowPreflightRequests(route)
             HttpCallMapper.allowPreflightRequests("$route/:id")
         }
+    }
+
+    private fun inferResourceNameFromRoute(portAndRoute: PortManager.PortAndRoute): String {
+        val route = portAndRoute.route
+        return route.substring(route.lastIndexOf("/") + 1)
     }
 
     private fun readKeyArgument(arguments: Set<ParsedArgument>, parsedInput: ParsedInput): String {
@@ -135,10 +141,5 @@ class ResourceCreation(private val portAndRoute: PortManager.PortAndRoute, priva
             }
         })
     }
-
-    companion object {
-        var resourceCounter = 0
-    }
-
 }
 
