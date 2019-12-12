@@ -129,7 +129,7 @@ Also it is possible to export your current Pygmalion request configuration to Op
 ```
 > openapi-export exportFile.yaml
 ```
-
+For resource templates Pygmalion will observe the entities you create and infer their schema for OpenAPI export.
 ## OAuth support
 ```
 > oauth /oauth
