@@ -6,6 +6,7 @@ import io.swagger.v3.oas.models.security.SecurityScheme
 import net.rudoll.pygmalion.model.ParsedInput
 import net.rudoll.pygmalion.common.HttpCallMapper
 import net.rudoll.pygmalion.handlers.openapi.export.OpenApiMonitor
+import spark.Spark.before
 
 object OAuthRouteMapper {
 
@@ -13,6 +14,7 @@ object OAuthRouteMapper {
         createAuthorizationEndpoint(authorizationEndpoint, parsedInput)
         createTokenEndpoint(tokenEndpoint, parsedInput)
         OpenApiMonitor.addSecurityScheme("oauth", getOAuthSecurityScheme(authorizationEndpoint, tokenEndpoint))
+        before(OAuthGuard.OAuthFilter(setOf(authorizationEndpoint, tokenEndpoint)))
     }
 
     private fun getOAuthSecurityScheme(authorizationEndpoint: String, tokenEndpoint: String): SecurityScheme {
