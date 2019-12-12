@@ -11,7 +11,7 @@ import io.swagger.v3.oas.models.media.Schema
 import java.lang.IllegalStateException
 import java.util.*
 
-class ExampleResponseGenerator(val openAPI: OpenAPI) {
+class ExampleResponseGenerator(private val openAPI: OpenAPI) {
 
     fun getFromSchema(schema: Schema<*>): JsonElement {
         return when {
