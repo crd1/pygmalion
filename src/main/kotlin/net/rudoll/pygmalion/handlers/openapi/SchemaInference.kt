@@ -34,9 +34,17 @@ object SchemaInference {
         }
         val mergedSchema = Schema<Any>()
         mergedSchema.properties = mutableMapOf()
-        inferredSchemata.forEach { mergedSchema.properties.putAll(it.properties) }
+        val propertySchemata = mutableMapOf<String, MutableList<Schema<*>>>()
+        inferredSchemata.forEach {
+            it.properties.forEach { propertyKey, property ->
+                propertySchemata.computeIfAbsent(propertyKey) { mutableListOf() }
+                propertySchemata[propertyKey]?.add(property)
+            }
+        }
+        propertySchemata.forEach { propertyKey, propertySchema -> mergedSchema.properties[propertyKey] = mergeSchemata(propertySchema) }
         return mergedSchema
     }
+
 
     private fun mergeArraySchemata(inferredSchemata: List<Schema<*>>): ArraySchema {
         return ArraySchema().type("array").items(mergeObjectSchemata(inferredSchemata.filter { it is ArraySchema }.map { ((it as ArraySchema).items as Schema<*>) }))
