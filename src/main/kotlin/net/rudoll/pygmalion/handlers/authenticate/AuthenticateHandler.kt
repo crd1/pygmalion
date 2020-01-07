@@ -42,6 +42,9 @@ object AuthenticateHandler : Handler {
 
     class BasicAuthFilter(private val route: String, private val username: String, private val password: String) : Filter {
         override fun handle(request: Request, response: Response) {
+            if (request.pathInfo() != route) {
+                return
+            }
             try {
                 val basicAuthHeader = request.headers("Authorization")
                 val encodedCredentials = basicAuthHeader.replaceFirst("Basic ", "")
