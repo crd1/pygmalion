@@ -22,7 +22,10 @@ object WhenRetValParser {
     private fun extractStatusCode(input: Input): Int {
         return try {
             val tokens = input.getTokens()
-            var statusTokenPosition = tokens.indexOf("status")
+            val statusTokenPosition = tokens.indexOf("status")
+            if (statusTokenPosition == -1) {
+                return 200
+            }
             val statusCode = tokens[statusTokenPosition + 1].toInt()
             if (statusTokenPosition > 0 && tokens[statusTokenPosition - 1] == "with") {
                 input.consume(statusTokenPosition - 1, 3)
