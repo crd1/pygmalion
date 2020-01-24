@@ -15,7 +15,11 @@ object OpenApiExportHandler : Handler {
             parsedInput.errors.add("No file for OpenApi export specified")
             return
         }
-        val file = File(input.first())
+        var scriptfilePath = input.first()
+        if (! StateHolder.state.basedir.isNullOrEmpty()){
+            scriptfilePath = StateHolder.state.basedir + "/" + scriptfilePath;
+        }
+        val file = File(scriptfilePath)
         input.consume(1)
         parsedInput.actions.add(object : Action {
             override fun run(arguments: Set<ParsedArgument>) {
