@@ -5,6 +5,7 @@ import net.rudoll.pygmalion.handlers.`when`.dynamicretval.EmptyRetVal
 import net.rudoll.pygmalion.handlers.`when`.dynamicretval.FileRetVal
 import net.rudoll.pygmalion.handlers.`when`.dynamicretval.PatternRetVal
 import net.rudoll.pygmalion.model.Input
+import net.rudoll.pygmalion.model.StateHolder
 import java.io.File
 
 object WhenRetValParser {
@@ -46,7 +47,12 @@ object WhenRetValParser {
     }
 
     private fun getRetValFromFile(input: Input, statusCode: Int): DynamicRetVal {
-        val file = File(input.second())
+        var returnValueFilePath = input.second()
+        if (! StateHolder.state.basedir.isNullOrEmpty()){
+            returnValueFilePath = StateHolder.state.basedir + "/" + returnValueFilePath;
+        }
+
+        val file = File(returnValueFilePath)
         input.consume(2)
         return FileRetVal(file, statusCode)
     }

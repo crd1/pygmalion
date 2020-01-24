@@ -3,10 +3,7 @@ package net.rudoll.pygmalion.handlers.apply
 import net.rudoll.pygmalion.cli.Cli
 import net.rudoll.pygmalion.handlers.Handler
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.ParsedArgument
-import net.rudoll.pygmalion.model.Action
-import net.rudoll.pygmalion.model.Input
-import net.rudoll.pygmalion.model.ParseStage
-import net.rudoll.pygmalion.model.ParsedInput
+import net.rudoll.pygmalion.model.*
 import java.io.File
 
 object ApplyHandler : Handler {
@@ -16,7 +13,11 @@ object ApplyHandler : Handler {
             parsedInput.errors.add("No config file specified.")
             return
         }
-        val file = File(input.first())
+        var scriptfilePath = input.first()
+        if (! StateHolder.state.basedir.isNullOrEmpty()){
+            scriptfilePath = StateHolder.state.basedir + "/" + scriptfilePath;
+        }
+        val file = File(scriptfilePath)
         input.consume(1)
         parsedInput.actions.add(object : Action {
             override fun run(arguments: Set<ParsedArgument>) {
