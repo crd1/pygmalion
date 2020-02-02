@@ -4,11 +4,16 @@ import net.rudoll.pygmalion.handlers.Handler
 import net.rudoll.pygmalion.model.Input
 import net.rudoll.pygmalion.model.ParseStage
 import net.rudoll.pygmalion.model.ParsedInput
+import net.rudoll.pygmalion.model.StateHolder
 import java.io.File
 
 object OpenApiHandler : Handler {
     override fun handle(input: Input, parsedInput: ParsedInput) {
-        val pathToOpenApiSpec = input.second()
+        var pathToOpenApiSpec = input.second()
+        if (! StateHolder.state.basedir.isNullOrEmpty()){
+            pathToOpenApiSpec = StateHolder.state.basedir + "/" + pathToOpenApiSpec;
+        }
+
         val openApiSpecFile = File(pathToOpenApiSpec)
         input.consume(2)
         if (!openApiSpecFile.exists()) {

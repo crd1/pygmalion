@@ -6,6 +6,7 @@ import net.rudoll.pygmalion.model.ParseStage
 import net.rudoll.pygmalion.model.ParsedInput
 import net.rudoll.pygmalion.properties.PropertiesProvider
 import net.rudoll.pygmalion.common.HandlerDiscoverer.findHandlers
+import net.rudoll.pygmalion.model.StateHolder
 import java.util.*
 
 
@@ -14,11 +15,11 @@ object Cli {
 
     internal val handlers = findHandlers("net.rudoll.pygmalion.handlers").filter { it.getParseStage() != ParseStage.NO_PASS }.sortedBy { it.getParseStage().order }
     private val version = PropertiesProvider.getVersion()
-    private val prompt = "pygmalion> "
+    private val prompt = "pygmalion "
     private val scanner = Scanner(System.`in`)
 
     private fun prompt() {
-        System.out.print(prompt)
+        System.out.print(prompt + " (" + StateHolder.state.basedir + ") > ")
     }
 
     fun eval(rawInput: String) {
