@@ -1,6 +1,9 @@
 package net.rudoll.pygmalion.handlers.resource
 
 import com.google.gson.*
+import net.rudoll.pygmalion.handlers.resource.persistence.DbResourcePersistence
+import net.rudoll.pygmalion.handlers.resource.persistence.InMemoryResourcePersistence
+import net.rudoll.pygmalion.handlers.resource.persistence.ResourcePersistence
 import net.rudoll.pygmalion.model.ParsedInput
 import spark.Response
 import java.io.File
@@ -8,9 +11,13 @@ import java.math.BigInteger
 import java.util.*
 
 
-class ResourceContainer(private val keyProperty: String, val name: String) {
+class ResourceContainer(private val keyProperty: String, val name: String, useDbPersistence: Boolean = false) {
 
-    internal val resources = mutableMapOf<String, JsonElement>()
+    internal val resources: ResourcePersistence = if (useDbPersistence) {
+        DbResourcePersistence(name)
+    } else {
+        InMemoryResourcePersistence()
+    }
     private val gson = Gson()
     private val jsonParser = JsonParser()
 

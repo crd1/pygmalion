@@ -9,6 +9,8 @@ import net.rudoll.pygmalion.model.Action
 import net.rudoll.pygmalion.model.ParsedInput
 import net.rudoll.pygmalion.common.HttpCallMapper
 import net.rudoll.pygmalion.common.PortManager
+import net.rudoll.pygmalion.handlers.arguments.parsedarguments.PersistentArgument
+import net.rudoll.pygmalion.handlers.resource.persistence.DbResourcePersistence
 import net.rudoll.pygmalion.model.StateHolder
 import spark.Request
 import spark.Response
@@ -25,7 +27,10 @@ class ResourceCreation(private val portAndRoute: PortManager.PortAndRoute, priva
             return
         }
         val keyProperty = readKeyArgument(arguments, parsedInput)
-        val resourceContainer = ResourceContainer(keyProperty, inferResourceNameFromRoute(portAndRoute) + resourceIndex.toString())
+        val resourceContainer = ResourceContainer(keyProperty = keyProperty, name = inferResourceNameFromRoute(portAndRoute) + resourceIndex.toString(), useDbPersistence = arguments.contains(PersistentArgument))
+        if (resourceContainer.resources is DbResourcePersistence) {
+            parsedInput.logs.add("Using database path ${resourceContainer.resources.dbPath}")
+        }
         if (initialRepoFile != null) {
             val initialized = resourceContainer.init(initialRepoFile, parsedInput)
             if (!initialized) {
