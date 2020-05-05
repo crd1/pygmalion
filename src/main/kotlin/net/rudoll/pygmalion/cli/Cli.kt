@@ -18,7 +18,7 @@ object Cli {
     private val scanner = Scanner(System.`in`)
 
     private fun prompt() {
-        System.out.print(prompt)
+        kotlin.io.print(prompt)
     }
 
     fun eval(rawInput: String) {
@@ -38,9 +38,9 @@ object Cli {
         } else {
             parsedInput.actions.forEach { it.run(parsedInput.arguments.toSet()) }
         }
-        parsedInput.errors.forEach { System.out.println(it) }
+        parsedInput.errors.forEach { println(it) }
         if (parsedInput.arguments.contains(VerboseArgument)) {
-            parsedInput.logs.forEach { System.out.println(it) }
+            parsedInput.logs.forEach { println(it) }
         }
         prompt()
     }
@@ -50,7 +50,7 @@ object Cli {
         prompt()
         initialCommand?.let {
             if (it.isNotEmpty()) {
-                System.out.println(it)
+                println(it)
                 eval(it)
             }
         }
@@ -70,7 +70,7 @@ object Cli {
     }
 
     fun print(message: String, promptBehaviour: PrintPromptBehaviour = PrintPromptBehaviour.WITH_PROMPT) {
-        System.out.println(message)
+        println(message)
         if (promptBehaviour == PrintPromptBehaviour.WITH_PROMPT) {
             prompt()
         }
@@ -78,7 +78,7 @@ object Cli {
 
     fun removePrompt() {
         repeat(prompt.length) {
-            System.out.print("\b")
+            kotlin.io.print("\b")
         }
     }
 
