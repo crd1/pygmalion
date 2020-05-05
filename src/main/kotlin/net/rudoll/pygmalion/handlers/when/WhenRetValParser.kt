@@ -1,9 +1,6 @@
 package net.rudoll.pygmalion.handlers.`when`
 
-import net.rudoll.pygmalion.handlers.`when`.dynamicretval.DynamicRetVal
-import net.rudoll.pygmalion.handlers.`when`.dynamicretval.EmptyRetVal
-import net.rudoll.pygmalion.handlers.`when`.dynamicretval.FileRetVal
-import net.rudoll.pygmalion.handlers.`when`.dynamicretval.PatternRetVal
+import net.rudoll.pygmalion.handlers.`when`.dynamicretval.*
 import net.rudoll.pygmalion.model.Input
 import java.io.File
 
@@ -15,6 +12,7 @@ object WhenRetValParser {
         }
         return when (input.first()) {
             "from" -> getRetValFromFile(input, statusCode)
+            "forward" -> getRetValByForwarding(input)
             else -> getRetValFromPattern(input, statusCode)
         }
     }
@@ -47,6 +45,13 @@ object WhenRetValParser {
         input.consume(1)
         return PatternRetVal(retVal, statusCode)
     }
+
+    private fun getRetValByForwarding(input: Input): DynamicRetVal {
+        val targetHost = input.second()
+        input.consume(2)
+        return ForwardRetVal(targetHost)
+    }
+
 
     private fun getRetValFromFile(input: Input, statusCode: Int): DynamicRetVal {
         val file = File(input.second())

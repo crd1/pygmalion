@@ -19,7 +19,7 @@ object WhenHandler : Handler {
     }
 
     override fun getDocumentation(): String {
-        return "when \$method \$route [then] [from|[with ]status] \$value"
+        return "when \$method \$route [then] [from|[with ]status|forward] \$value"
     }
 
     override fun canHandle(input: Input): Boolean {
@@ -69,7 +69,7 @@ object WhenHandler : Handler {
 
     private fun handleCall(request: Request, response: Response, retVal: DynamicRetVal): String {
         response.status(retVal.getStatusCode())
-        return retVal.getRetVal(request)
+        return retVal.getRetVal(request, response)
     }
 
     private data class RoutingContext(val route: String, val method: String, val port: Int)
