@@ -37,6 +37,7 @@ Note that the resources can even be initialized from a JSON array stored in a fi
 ```
 > restTemplate /cookies from cookies.txt --key=flavour
 ```
+If you add the `--persistent` flag, your data will be stored in a local database and hence still be present when restarting Pygmalion.
 
 ## Further examples
 
@@ -153,4 +154,4 @@ pygmalion
 This project is powered by the awesome Spark-Java project (i.e. its Kotlin version). Please see: https://github.com/perwendel/spark
 
 ## License
-Copyright by Christopher Rudoll, 2018-2019. This is Free Software and published under the GPL 3.0 License.
+Copyright by Christopher Rudoll, 2018-2020. This is Free Software and published under the GPL 3.0 License.
