@@ -69,6 +69,11 @@ This will apply every line found in the provided file as if it had been entered 
 > when post /test then ${JSON.parse(body).name}
 ```
 
+### Forward request
+```
+> when get / then forward https://google.com
+```
+
 ### Status code
 ```
 > when get /test then 'Works' status 200
