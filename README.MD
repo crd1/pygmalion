@@ -53,6 +53,12 @@ Then check `http://localhost:8080/test`.
 > when get /test then from index.html
 ```
 
+### Static serving
+```
+> static .
+```
+This will serve from the specified directory statically. (`.` is for current, you can use absolute path as well.) 
+
 ### Scripting
 ```
 > apply script.txt
