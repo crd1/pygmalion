@@ -21,7 +21,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     implementation "com.sparkjava:spark-core:2.5.4"
-    implementation 'org.reflections:reflections:0.9.11'
+    implementation group: 'io.github.classgraph', name: 'classgraph', version: '4.8.78'
     implementation group: 'com.couchbase.lite', name: 'couchbase-lite-java', version: '2.7.1'
     implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
     implementation group: 'io.swagger.parser.v3', name: 'swagger-parser', version: '2.0.14'

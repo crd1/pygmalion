@@ -1,25 +1,19 @@
 package net.rudoll.pygmalion.common
 
+import io.github.classgraph.ClassGraph
 import net.rudoll.pygmalion.handlers.Handler
-import org.reflections.Reflections
-import org.reflections.scanners.ResourcesScanner
-import org.reflections.scanners.SubTypesScanner
-import org.reflections.util.ClasspathHelper
-import org.reflections.util.ConfigurationBuilder
-import org.reflections.util.FilterBuilder
-import java.util.*
+
 
 object HandlerDiscoverer {
 
     fun findHandlers(packageName: String): List<Handler> {
-        val classLoadersList = LinkedList<ClassLoader>()
-        classLoadersList.add(ClasspathHelper.contextClassLoader())
-        classLoadersList.add(ClasspathHelper.staticClassLoader())
-        val reflections = Reflections(ConfigurationBuilder()
-                .setScanners(SubTypesScanner(false), ResourcesScanner())
-                .setUrls(ClasspathHelper.forClassLoader(*classLoadersList.toTypedArray()))
-                .filterInputsBy(FilterBuilder().include(FilterBuilder.prefix(packageName))))
-        return reflections.getSubTypesOf(Handler::class.java).toList().map { handlerClass -> handlerClass.kotlin.objectInstance!! }
+        return ClassGraph()
+                .enableAllInfo()
+                .whitelistPackages(packageName)
+                .scan().use {
+                    it.allClasses.map { classInfo -> Class.forName(classInfo.name) }
+                            .filter { clazz -> Handler::class.java.isAssignableFrom(clazz) && !clazz.isInterface }
+                            .mapNotNull { handlerClass -> handlerClass.kotlin.objectInstance as Handler }
+                }
     }
-
 }
