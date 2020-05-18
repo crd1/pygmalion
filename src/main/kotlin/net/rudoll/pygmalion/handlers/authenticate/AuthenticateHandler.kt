@@ -1,6 +1,5 @@
 package net.rudoll.pygmalion.handlers.authenticate
 
-import com.sun.org.apache.xml.internal.security.utils.Base64
 import net.rudoll.pygmalion.handlers.Handler
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.ParsedArgument
 import net.rudoll.pygmalion.model.Action
@@ -13,6 +12,7 @@ import spark.Response
 import spark.Spark.before
 import spark.Spark.halt
 import java.nio.charset.StandardCharsets.UTF_8
+import java.util.*
 
 object AuthenticateHandler : Handler {
     override fun getParseStage(): ParseStage {
@@ -48,7 +48,7 @@ object AuthenticateHandler : Handler {
             try {
                 val basicAuthHeader = request.headers("Authorization")
                 val encodedCredentials = basicAuthHeader.replaceFirst("Basic ", "")
-                val decodedCredentials = String(Base64.decode(encodedCredentials), UTF_8).split(":")
+                val decodedCredentials = String(Base64.getDecoder().decode(encodedCredentials), UTF_8).split(":")
                 val authenticated = decodedCredentials[0] == username && decodedCredentials[1] == password
                 if (authenticated) {
                     return
