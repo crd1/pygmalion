@@ -18,6 +18,10 @@ object ApplyHandler : Handler {
         }
         val file = File(input.first())
         input.consume(1)
+        if (!file.exists()) {
+            parsedInput.errors.add("File does not exist")
+            return
+        }
         parsedInput.actions.add(object : Action {
             override fun run(arguments: Set<ParsedArgument>) {
                 Cli.print("", Cli.PrintPromptBehaviour.WITH_PROMPT)
