@@ -103,6 +103,7 @@ The following properties are injected by Pygmalion via bindings and can be acces
 |request|JSON string representing the whole request|
 |timestamp|Current timestamp (ms since the epoch)|
 |uri|The request's URI|
+|restTemplates|JSON string representing the current state of all configured restTemplates (i.e. the resources themselves)|
 
 ## Websockets
 It is possible to create websocket endpoints like this:
