@@ -105,6 +105,11 @@ The following properties are injected by Pygmalion via bindings and can be acces
 |uri|The request's URI|
 |restTemplates|JSON string representing the current state of all configured restTemplates (i.e. the resources themselves)|
 
+The JavaScript expression can also be put into a file instead, like that:
+```
+> when post /test then eval test.js
+```
+
 ## Websockets
 It is possible to create websocket endpoints like this:
 ```
