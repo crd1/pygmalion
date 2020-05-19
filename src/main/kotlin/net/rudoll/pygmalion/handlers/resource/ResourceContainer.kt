@@ -55,6 +55,11 @@ class ResourceContainer(private val keyProperty: String, val name: String, useDb
             getNumericUUID()
         }
         val newBody = setIdIfPossible(body, id)
+        if (resources[id] != null) {
+            //already taken
+            response.status(409)
+            return "ID Conflict"
+        }
         resources[id] = newBody
         response.status(201)
         return newBody.toString()
