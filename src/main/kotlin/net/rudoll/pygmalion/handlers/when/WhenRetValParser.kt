@@ -13,6 +13,7 @@ object WhenRetValParser {
         return when (input.first()) {
             "from" -> getRetValFromFile(input, statusCode)
             "forward" -> getRetValByForwarding(input)
+            "eval" -> getRetValByEval(input, statusCode)
             else -> getRetValFromPattern(input, statusCode)
         }
     }
@@ -57,6 +58,12 @@ object WhenRetValParser {
         val file = File(input.second())
         input.consume(2)
         return FileRetVal(file, statusCode)
+    }
+
+    private fun getRetValByEval(input: Input, statusCode: Int): DynamicRetVal {
+        val file = File(input.second())
+        input.consume(2)
+        return EvalRetVal(file, statusCode)
     }
 
 }

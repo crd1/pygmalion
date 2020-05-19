@@ -23,7 +23,7 @@ class DynamicRetValProcessor {
         return gsonBuilder.create()
     }
 
-    fun process(pattern: String, request: Request): String {
+    fun process(pattern: String, request: Request, evalAll: Boolean = false): String {
         return try {
             val bindings = engine.getBindings(ScriptContext.ENGINE_SCOPE)
             NashornExtension.extend(bindings)
@@ -39,6 +39,9 @@ class DynamicRetValProcessor {
                 bindings["cookies"] = gson.toJson(request.cookies())
                 bindings["uri"] = request.uri()
                 bindings["request"] = gson.toJson(request)
+            }
+            if (evalAll) {
+                return engine.eval(pattern, bindings)?.toString() ?: ""
             }
 
             val matcher = EXPRESSION_PATTERN.matcher(pattern)
