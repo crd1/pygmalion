@@ -2,15 +2,12 @@ package net.rudoll.pygmalion.handlers.resource
 
 import io.swagger.v3.oas.models.parameters.RequestBody
 import io.swagger.v3.oas.models.responses.ApiResponses
-import net.rudoll.pygmalion.handlers.arguments.parsedarguments.AllowCorsArgument
-import net.rudoll.pygmalion.handlers.arguments.parsedarguments.KeyArgument
-import net.rudoll.pygmalion.handlers.arguments.parsedarguments.ParsedArgument
-import net.rudoll.pygmalion.model.Action
-import net.rudoll.pygmalion.model.ParsedInput
 import net.rudoll.pygmalion.common.HttpCallMapper
 import net.rudoll.pygmalion.common.PortManager
-import net.rudoll.pygmalion.handlers.arguments.parsedarguments.PersistentArgument
+import net.rudoll.pygmalion.handlers.arguments.parsedarguments.*
 import net.rudoll.pygmalion.handlers.resource.persistence.DbResourcePersistence
+import net.rudoll.pygmalion.model.Action
+import net.rudoll.pygmalion.model.ParsedInput
 import net.rudoll.pygmalion.model.StateHolder
 import spark.Request
 import spark.Response
@@ -27,7 +24,10 @@ class ResourceCreation(private val portAndRoute: PortManager.PortAndRoute, priva
             return
         }
         val keyProperty = readKeyArgument(arguments, parsedInput)
-        val resourceContainer = ResourceContainer(keyProperty = keyProperty, name = inferResourceNameFromRoute(portAndRoute) + resourceIndex.toString(), useDbPersistence = arguments.contains(PersistentArgument))
+        var name = inferResourceNameFromRoute(portAndRoute) + resourceIndex.toString()
+        arguments.filterIsInstance<NameArgument>().forEach { name = it.name }
+        val resourceContainer = ResourceContainer(keyProperty = keyProperty, name = name, useDbPersistence = arguments.contains(PersistentArgument))
+        StateHolder.state.resources[name] = resourceContainer
         if (resourceContainer.resources is DbResourcePersistence) {
             parsedInput.logs.add("Using database path ${resourceContainer.resources.dbPath}")
         }
@@ -58,7 +58,7 @@ class ResourceCreation(private val portAndRoute: PortManager.PortAndRoute, priva
 
     private fun readKeyArgument(arguments: Set<ParsedArgument>, parsedInput: ParsedInput): String {
         var keyProperty = ResourceContainer.DEFAULT_KEY_PROPERTY //default
-        arguments.filter { it is KeyArgument }.forEach { keyProperty = (it as KeyArgument).key }
+        arguments.filterIsInstance<KeyArgument>().forEach { keyProperty = it.key }
         parsedInput.logs.add("Using key property: $keyProperty")
         return keyProperty
     }
