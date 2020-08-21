@@ -38,6 +38,7 @@ object OpenApiMonitor {
             "put" -> pathItem.put(operation)
             "delete" -> pathItem.delete(operation)
             "options" -> pathItem.options(operation)
+            "patch" -> pathItem.patch(operation)
         }
     }
 

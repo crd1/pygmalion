@@ -32,6 +32,7 @@ object HttpCallMapper {
             "put" -> Spark.put(route, requestHandler)
             "delete" -> Spark.delete(route, requestHandler)
             "options" -> Spark.options(route, requestHandler)
+            "patch" -> Spark.patch(route, requestHandler)
             else -> {
                 parsedInput.errors.add("Unknown method.")
                 return

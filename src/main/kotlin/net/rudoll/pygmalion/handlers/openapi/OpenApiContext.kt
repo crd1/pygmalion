@@ -66,6 +66,7 @@ class OpenApiContext(private val openAPI: OpenAPI) {
         applyOperation(path.key, "put", path.value.put, parsedInput)
         applyOperation(path.key, "options", path.value.options, parsedInput)
         applyOperation(path.key, "delete", path.value.delete, parsedInput)
+        applyOperation(path.key, "patch", path.value.patch, parsedInput)
     }
 
     private fun applyOperation(path: String, method: String, operation: Operation?, parsedInput: ParsedInput) {
