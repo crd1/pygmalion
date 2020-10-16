@@ -13,11 +13,17 @@ import java.util.*
 
 class ResourceContainer(private val keyProperty: String, val name: String, useDbPersistence: Boolean = false) {
 
-    internal val resources: ResourcePersistence = if (useDbPersistence) {
-        DbResourcePersistence(name)
-    } else {
-        InMemoryResourcePersistence()
+    internal val resources: ResourcePersistence = getResourcePersistence(useDbPersistence)
+
+    private fun getResourcePersistence(useDbPersistence: Boolean): ResourcePersistence {
+        if (System.getProperty("os.name").toLowerCase().contains("linux")) return InMemoryResourcePersistence() // we do not support persistence on linux
+        return if (useDbPersistence) {
+            DbResourcePersistence(name)
+        } else {
+            InMemoryResourcePersistence()
+        }
     }
+
     private val gson = Gson()
     private val jsonParser = JsonParser()
 
