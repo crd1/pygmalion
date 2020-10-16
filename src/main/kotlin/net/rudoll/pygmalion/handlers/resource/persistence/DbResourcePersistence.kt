@@ -14,6 +14,10 @@ class DbResourcePersistence(private val resourcePath: String) : ResourcePersiste
     val dbPath: String = System.getProperty("java.io.tmpdir") + "/pygmalion/default.db"
 
     init {
+        if (!initialized) {
+            CouchbaseLite.init()
+            initialized = true
+        }
         val config = DatabaseConfiguration()
         config.directory = dbPath
         database = Database(DATABASE_NAME, config)
@@ -46,10 +50,7 @@ class DbResourcePersistence(private val resourcePath: String) : ResourcePersiste
 
     companion object {
         private const val DATABASE_NAME = "PYGMALION_DB"
-
-        init {
-            CouchbaseLite.init()
-        }
+        private var initialized = false
     }
 }
 
