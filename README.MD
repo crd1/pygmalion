@@ -8,6 +8,9 @@ This is a web mock CLI that can be used in order to create self-defined local en
 - `gradlew build`.
 - Add the `run` folder to your PATH.
 
+### Recommendation: GraalVM
+Running Pygmalion (and hence the unit tests as well) will require either the deprecated Nashorn engine or the Graaljs engine to be included in your Java Runtime Environment. This means that from JDK 15 onwards you will need to use [GraalVM](https://www.graalvm.org/) instead of the regular JDK for testing and running.
+
 ## Usage
 ```
 pygmalion

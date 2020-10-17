@@ -74,5 +74,6 @@ class DynamicRetValProcessor {
 
     companion object {
         private val engine = ScriptEngineManager().getEngineByName("nashorn")
+                ?: ScriptEngineManager().getEngineByName("graaljs") ?: throw IllegalStateException("Could not get javascript engine.")
     }
 }
