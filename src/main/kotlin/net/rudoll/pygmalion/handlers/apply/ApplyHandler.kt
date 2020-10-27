@@ -25,7 +25,7 @@ object ApplyHandler : Handler {
         parsedInput.actions.add(object : Action {
             override fun run(arguments: Set<ParsedArgument>) {
                 Cli.print("", Cli.PrintPromptBehaviour.WITH_PROMPT)
-                file.readLines().filter { it.isNotEmpty() }.forEach {
+                file.readLines().filter { it.isNotEmpty() }.filter { !it.isComment() }.forEach {
                     Cli.print("$it\n", Cli.PrintPromptBehaviour.WITHOUT_PROMPT)
                     Cli.eval(it)
                 }
@@ -45,4 +45,8 @@ object ApplyHandler : Handler {
     override fun getParseStage(): ParseStage {
         return ParseStage.FIRST_PASS
     }
+
+
+    private fun String.isComment(): Boolean = this.startsWith("#") || this.startsWith("//")
 }
+

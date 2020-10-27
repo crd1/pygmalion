@@ -66,7 +66,7 @@ This will serve from the specified directory statically. (`.` is for current, yo
 ```
 > apply script.txt
 ```
-This will apply every line found in the provided file as if it had been entered in the CLI.
+This will apply every line found in the provided file as if it had been entered in the CLI. (Lines starting with `#` or `//` are considered to be comments.)
 
 ### Echo request body
 ```
