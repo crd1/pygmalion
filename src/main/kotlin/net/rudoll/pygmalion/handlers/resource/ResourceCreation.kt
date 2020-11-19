@@ -3,6 +3,7 @@ package net.rudoll.pygmalion.handlers.resource
 import io.swagger.v3.oas.models.parameters.RequestBody
 import io.swagger.v3.oas.models.responses.ApiResponses
 import net.rudoll.pygmalion.common.HttpCallMapper
+import net.rudoll.pygmalion.common.OsUtil
 import net.rudoll.pygmalion.common.PortManager
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.*
 import net.rudoll.pygmalion.handlers.resource.persistence.DbResourcePersistence
@@ -26,7 +27,10 @@ class ResourceCreation(private val portAndRoute: PortManager.PortAndRoute, priva
         val keyProperty = readKeyArgument(arguments, parsedInput)
         var name = inferResourceNameFromRoute(portAndRoute) + resourceIndex.toString()
         arguments.filterIsInstance<NameArgument>().forEach { name = it.name }
-        val resourceContainer = ResourceContainer(keyProperty = keyProperty, name = name, useDbPersistence = arguments.contains(PersistentArgument))
+        if (OsUtil.isLinux() && arguments.contains(PersistentArgument)) {
+            parsedInput.logs.add("${PersistentArgument::class.java.simpleName} not supported on linux.")
+        }
+        val resourceContainer = ResourceContainer(keyProperty = keyProperty, name = name, useDbPersistence = arguments.contains(PersistentArgument) && !OsUtil.isLinux())
         StateHolder.state.resources[name] = resourceContainer
         if (resourceContainer.resources is DbResourcePersistence) {
             parsedInput.logs.add("Using database path ${resourceContainer.resources.dbPath}")
