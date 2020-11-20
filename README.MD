@@ -92,7 +92,11 @@ This will apply every line found in the provided file as if it had been entered 
 ```
 > when post /test then ${JSON.parse(queryParams).number + 3}
 ```
-In general, expressions within `${}` are evaluated using the Nashorn Project, i.e. valid JavaScript expressions can be used.
+In general, expressions within `${}` are evaluated using the Java Scripting Extension (defaulting to Java Script), i.e. valid JavaScript expressions can be used.
+It is also possible to configure the type of the engine itself via the `engine` command, e.g.:
+```
+engine jruby
+```
 
 The following properties are injected by Pygmalion via bindings and can be accessed from within the expressions:
 

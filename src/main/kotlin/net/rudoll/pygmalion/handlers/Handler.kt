@@ -12,5 +12,5 @@ interface Handler {
 
     fun getDocumentation() : String
 
-    fun getParseStage() : ParseStage
+    fun getParseStage() : ParseStage = ParseStage.FIRST_PASS
 }

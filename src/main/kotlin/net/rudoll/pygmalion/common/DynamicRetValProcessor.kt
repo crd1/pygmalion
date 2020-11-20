@@ -9,7 +9,6 @@ import net.rudoll.pygmalion.model.StateHolder
 import spark.Request
 import java.util.regex.Pattern
 import javax.script.ScriptContext
-import javax.script.ScriptEngineManager
 
 class DynamicRetValProcessor {
     private val EXPRESSION_REGEX = "\\\$\\{(.+)\\}"
@@ -24,6 +23,7 @@ class DynamicRetValProcessor {
     }
 
     fun process(pattern: String, request: Request, evalAll: Boolean = false): String {
+        val engine = ScriptEngineProvider.engine?.scriptEngine ?: return pattern
         return try {
             val bindings = engine.getBindings(ScriptContext.ENGINE_SCOPE)
             NashornExtension.extend(bindings)
@@ -70,10 +70,5 @@ class DynamicRetValProcessor {
         val headerMap = mutableMapOf<String, String>()
         headers.forEach { headerMap[it] = request.headers(it) }
         return headerMap.toMap()
-    }
-
-    companion object {
-        private val engine = ScriptEngineManager().getEngineByName("nashorn")
-                ?: ScriptEngineManager().getEngineByName("graaljs") ?: throw IllegalStateException("Could not get javascript engine.")
     }
 }
