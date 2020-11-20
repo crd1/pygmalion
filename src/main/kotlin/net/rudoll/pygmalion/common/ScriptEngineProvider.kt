@@ -27,6 +27,7 @@ object ScriptEngineProvider {
     private fun createDefaultEngine(): Engine? {
         return createEngineByName("nashorn")
                 ?: createEngineByName("graaljs")
+                ?: createEngineByName("jruby")
     }
 
     private fun createEngineByName(engineName: String): Engine? {

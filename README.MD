@@ -10,6 +10,7 @@ This is a web mock CLI that can be used in order to create self-defined local en
 
 ### Recommendation: GraalVM
 Running Pygmalion (and hence the unit tests as well) will require either the deprecated Nashorn engine or the Graaljs engine to be included in your Java Runtime Environment. This means that from JDK 15 onwards you will need to use [GraalVM](https://www.graalvm.org/) instead of the regular JDK for testing and running.
+(If none of those engines is present, jRuby is used as a fallback, which obviously changes the execution semantics of your scripts.)
 
 ## Usage
 ```
