@@ -42,6 +42,10 @@ Note that the resources can even be initialized from a JSON array stored in a fi
 > restTemplate /cookies from cookies.txt --key=flavour
 ```
 If you add the `--persistent` flag, your data will be stored in a local database and hence still be present when restarting Pygmalion.
+If you want to make sure that your databases for different pygmalion configurations do not get mixed, you can provide a name for the database like this:
+```
+database db1
+```
 
 ## Further examples
 

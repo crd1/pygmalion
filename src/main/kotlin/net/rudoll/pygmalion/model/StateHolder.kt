@@ -14,8 +14,8 @@ object StateHolder {
                      val timerTasks: MutableSet<TimerTask> = mutableSetOf(),
                      var resourceCounter: Int = 0,
                      val resources: MutableMap<String, ResourceContainer> = mutableMapOf(),
-                     var engineName: String? = null)
-
+                     var engineName: String? = null,
+                     var databaseName: String = "pygmaliondb")
 
     var state = State()
 
