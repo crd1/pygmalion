@@ -19,7 +19,7 @@ object WhenHandler : Handler {
     }
 
     override fun getDocumentation(): String {
-        return "when \$method \$route [then] [from|[with ]status|forward] \$value"
+        return "when \$method \$route [then] [[with ]status \$status] [from|forward] \$value"
     }
 
     override fun canHandle(input: Input): Boolean {
