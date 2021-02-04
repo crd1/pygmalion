@@ -112,6 +112,7 @@ The following properties are injected by Pygmalion via bindings and can be acces
 |counter|How many times this endpoint has been called|
 |headers|JSON string representing all request headers|
 |queryParams|JSON string representing all queryParams|
+|params|JSON string representing all "params", i.e. pathVariables|
 |request|JSON string representing the whole request|
 |timestamp|Current timestamp (ms since the epoch)|
 |uri|The request's URI|

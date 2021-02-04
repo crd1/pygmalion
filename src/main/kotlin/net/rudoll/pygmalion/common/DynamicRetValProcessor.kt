@@ -39,6 +39,7 @@ class DynamicRetValProcessor {
                 bindings["cookies"] = gson.toJson(request.cookies())
                 bindings["uri"] = request.uri()
                 bindings["request"] = gson.toJson(request)
+                bindings["params"] = gson.toJson(request.params())
             }
             if (evalAll) {
                 return engine.eval(pattern, bindings)?.toString() ?: ""
