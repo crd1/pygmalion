@@ -123,6 +123,11 @@ The JavaScript expression can also be put into a file instead, like that:
 > when post /test then eval test.js
 ```
 
+Another common use case is to create a mapping using a path variable and then using that variable in the return value expression:
+```
+> when get /:pathvariable then '${"Your variable is: " + JSON.parse(params)[":pathvariable"]}'
+```
+
 ## Websockets
 It is possible to create websocket endpoints like this:
 ```
