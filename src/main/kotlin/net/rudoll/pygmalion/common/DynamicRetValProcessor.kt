@@ -29,17 +29,17 @@ class DynamicRetValProcessor {
             NashornExtension.extend(bindings)
             bindings["counter"] = retValCounter.call()
             bindings["timestamp"] = System.currentTimeMillis().toString()
-            bindings["restTemplates"] = gson.toJson(StateHolder.state.resources.mapValues { it.value.resources.values })
+            bindings["restTemplates"] = StateHolder.state.resources.mapValues { it.value.resources.values }
             if (request is WebsocketResponder.WebsocketRequest) {
                 bindings["message"] = request.message
             } else if (request != DynamicRetVal.DummyRequest) {
                 bindings["body"] = request.body()
-                bindings["headers"] = gson.toJson(getHeaderMap(request))
-                bindings["queryParams"] = gson.toJson(getQueryParamMap(request))
-                bindings["cookies"] = gson.toJson(request.cookies())
+                bindings["headers"] = getHeaderMap(request).toMap()
+                bindings["queryParams"] = getQueryParamMap(request).toMap()
+                bindings["cookies"] = request.cookies().toMap()
                 bindings["uri"] = request.uri()
                 bindings["request"] = gson.toJson(request)
-                bindings["params"] = gson.toJson(request.params())
+                bindings["params"] = request.params().toMap()
             }
             if (evalAll) {
                 return engine.eval(pattern, bindings)?.toString() ?: ""

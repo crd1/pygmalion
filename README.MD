@@ -95,7 +95,7 @@ This will apply every line found in the provided file as if it had been entered 
 
 ### Dynamic evaluation
 ```
-> when post /test then ${JSON.parse(queryParams).number + 3}
+> when post /test then ${queryParams.number + 3}
 ```
 In general, expressions within `${}` are evaluated using the JSR-223 Java Scripting Extension (defaulting to the Nashorn and GraalJS engines), i.e. valid JavaScript expressions can be used.
 It is also possible to configure the type of the engine itself via the `engine` command, e.g.:
@@ -108,15 +108,15 @@ The following properties are injected by Pygmalion via bindings and can be acces
 |Property|Description|
 |---|---|
 |body|Request body|
-|cookies|JSON string representing all cookies sent with the request|
+|cookies|Map of all cookies sent with the request|
 |counter|How many times this endpoint has been called|
-|headers|JSON string representing all request headers|
-|queryParams|JSON string representing all queryParams|
-|params|JSON string representing all "params", i.e. pathVariables|
+|headers|Map of all request headers|
+|queryParams|Map of all queryParams|
+|params|Map of all "params", i.e. pathVariables|
 |request|JSON string representing the whole request|
 |timestamp|Current timestamp (ms since the epoch)|
 |uri|The request's URI|
-|restTemplates|JSON string representing the current state of all configured restTemplates (i.e. the resources themselves)|
+|restTemplates|Map of JSON objects representing the current state of all configured restTemplates (i.e. the resources themselves)|
 
 The JavaScript expression can also be put into a file instead, like that:
 ```
@@ -125,7 +125,7 @@ The JavaScript expression can also be put into a file instead, like that:
 
 Another common use case is to create a mapping using a path variable and then using that variable in the return value expression:
 ```
-> when get /:pathvariable then '${"Your variable is: " + JSON.parse(params)[":pathvariable"]}'
+> when get /:pathvariable then '${"Your variable is: " + params[":pathvariable"]}'
 ```
 
 ## Websockets
