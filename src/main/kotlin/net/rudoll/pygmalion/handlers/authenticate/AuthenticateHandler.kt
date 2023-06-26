@@ -1,5 +1,6 @@
 package net.rudoll.pygmalion.handlers.authenticate
 
+import net.rudoll.pygmalion.common.PortManager
 import net.rudoll.pygmalion.handlers.Handler
 import net.rudoll.pygmalion.handlers.arguments.parsedarguments.ParsedArgument
 import net.rudoll.pygmalion.model.Action
@@ -34,6 +35,7 @@ object AuthenticateHandler : Handler {
         val password = input.getTokens()[usernameIndex + 1]
         parsedInput.actions.add(object : Action {
             override fun run(arguments: Set<ParsedArgument>) {
+                PortManager.ensurePortIsSet(parsedInput)
                 before(BasicAuthFilter(route, username, password))
             }
         })
@@ -42,7 +44,7 @@ object AuthenticateHandler : Handler {
 
     class BasicAuthFilter(private val route: String, private val username: String, private val password: String) : Filter {
         override fun handle(request: Request, response: Response) {
-            if (request.pathInfo() != route) {
+            if (!request.pathInfo().startsWith(route)) {
                 return
             }
             try {
